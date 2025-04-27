@@ -20,16 +20,42 @@ body {
   @apply m-2 mt-3 rounded-full bg-gray-200 p-2 text-base text-black;
 }
 
+.profile-dropdown {
+  li:nth-child(n) {
+    /* All li inside a dropdown */
+    @apply px-5 hover:bg-gray-500 py-1
+  }
+  li:nth-child(1) {
+    /* First li inside a dropdown */
+    @apply mt-5;
+  }
+  li:nth-last-child(1) {
+    /* Last li inside a dropdown */
+    @apply mb-5;
+  }
+  
+  li:not(:nth-last-child(1)):nth-child(n) {
+    /* All li except the last inside the dropdown */
+    /* @apply after:relative after:mt-2 after:mb-2 after:block after:h-[1px] after:w-[100%] after:bg-gray-500; */
+    @apply after:relative after:top-[1pt] after:block after:h-[1px] after:w-[100%] after:bg-gray-500;
+  }
+}
+
 .loaded-card {
-  @apply transition-all duration-1000 !h-auto
+  @apply !h-auto transition-all duration-1000;
 }
 
 .skeleton-card {
-  @apply cursor-pointer ml-0 h-[15em] w-[11em] overflow-hidden rounded-xl bg-[#ececec] bg-[linear-gradient(110deg,_#ececec_12%,_#f5f5f5_24%,_#ececec_33%)] bg-[length:400%_200%] bg-repeat shadow-[0_10px_10px_rgba(0,0,0,0.05)];
+  @apply ml-0 h-[15em] w-[11em] cursor-pointer overflow-hidden rounded-xl bg-[#ececec] bg-[linear-gradient(110deg,_#ececec_12%,_#f5f5f5_24%,_#ececec_33%)] bg-[length:400%_200%] bg-repeat shadow-[0_10px_10px_rgba(0,0,0,0.05)];
 }
 
-h1, h2, h3, h4, h5, h6 {
-  @apply leading-[1.1] font-sans font-bold mt-12 mb-6 break-words
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply mt-12 mb-6 font-sans leading-[1.1] font-bold break-words;
 }
 
 .zoomedInCard {
