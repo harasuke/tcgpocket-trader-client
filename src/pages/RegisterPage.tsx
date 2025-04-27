@@ -1,24 +1,38 @@
-import {
-  useSignUp,
-  useSignIn,
-  SignedOut,
-  SignedIn,
-  SignOutButton,
-  useClerk,
-} from "@clerk/clerk-react";
+import { useSignUp, SignedOut, SignedIn, useClerk } from "@clerk/clerk-react";
 import React, { useRef } from "react";
 import { NavLink } from "react-router-dom";
 
 interface RegisterPageProps {}
 
 export default function RegisterPage({}: RegisterPageProps) {
-  const { signUp } = useSignUp();
-  const { signIn } = useSignIn();
+  const { isLoaded, signUp, setActive } = useSignUp();
   const { signOut } = useClerk();
 
   const email = useRef<HTMLInputElement>(null);
   const password = useRef<HTMLInputElement>(null);
   const friendCode = useRef<HTMLInputElement>(null);
+
+  if (!isLoaded) return;
+
+  const register = async (e) => {
+    e.preventDefault();
+
+    try {
+      const result = await signUp?.create({
+        emailAddress: email?.current?.value,
+        password: password?.current?.value,
+        unsafeMetadata: {
+          friendCode: friendCode?.current?.value,
+        },
+      });
+
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+      }
+    } catch (err) {
+      console.warn("qui >>>", err);
+    }
+  };
 
   return (
     <>
@@ -36,20 +50,7 @@ export default function RegisterPage({}: RegisterPageProps) {
             name="friendCode"
             ref={friendCode}
           ></input>
-          <button
-            onClick={() =>
-              signUp?.create({
-                emailAddress: email?.current?.value,
-                password: password?.current?.value,
-                unsafeMetadata: {
-                  friendCode: friendCode?.current?.value,
-                },
-              })
-            }
-          >
-            Register
-          </button>
-
+          <button onClick={(e) => register(e)}>Register</button>
           <p>
             Already registered ? Go to <NavLink to="/signin">Log In</NavLink>
           </p>
