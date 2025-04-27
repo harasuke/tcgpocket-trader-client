@@ -1,0 +1,16 @@
+.offers img:nth-child(1) {
+  transform: rotate(-24deg) translate(-2rem, 0);
+}
+.offers img:nth-child(2) {
+  transform: rotate(-12deg) translate(0rem, 1rem);
+}
+.offers img:nth-child(3) {
+  transform: rotate(0deg) translate(2rem, 1rem);
+}
+.offers img:nth-child(4) {
+  transform: rotate(12deg) translate(4rem, 1rem);
+}
+.offers img:nth-child(5) {
+  transform: rotate(24deg) translate(6rem, 1rem);
+  transition: all 1s ease;
+}
