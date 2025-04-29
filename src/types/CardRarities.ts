@@ -8,3 +8,5 @@ export enum CardRarities {
   Immersive = "Immersive",
   GoldCrown = "Gold Crown"
 }
+
+export type CardRarityType = keyof typeof CardRarities

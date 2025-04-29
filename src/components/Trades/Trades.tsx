@@ -1,17 +1,17 @@
 import React from "react";
-import { useEffect, useState } from "react";
 import Trade, { SkeletonTrade } from "../Trade";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Endpoints } from "../../types/Endpoints";
+import useGetAPI from "../../utils/useGetAPI";
 
 interface TradesProps {
   amountToLoad?: number;
 }
 
 const Trades = ({ amountToLoad = 15 }: TradesProps) => {
-  const [trades, setTrades] = useState([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const { res: trades, loadingReq } = useGetAPI(Endpoints.MANY_TRADE(amountToLoad, "Rare"));
 
   const settings = {
     dots: true,
@@ -26,28 +26,12 @@ const Trades = ({ amountToLoad = 15 }: TradesProps) => {
     swipeToSlide: true,
   };
 
-  useEffect(() => {
-    const loadTrades = (async () => {
-      try {
-        const res = await fetch(`/api/card/batch/${amountToLoad}/Common`);
-        if (!res.ok) {
-          throw new Error("Cannot load trades");
-        }
-        const data = await res.json();
-        setTrades(data);
-        setLoading(false);
-      } catch (err) {
-        console.log("Exception > ", err);
-      }
-    })();
-  }, []);
-
   return (
     <>
-        <h1 className="text-3xl text-center">Recent Trades</h1>
+      <h1 className="text-center text-3xl">Recent Trades</h1>
       {
         <Slider {...settings} className="m-2 rounded-xl bg-blue-200">
-          {loading
+          {loadingReq
             ? Array.from({ length: amountToLoad }).map((_, index) => <SkeletonTrade key={index} />)
             : trades.length > 0 &&
               trades?.map((trade, index) => (
