@@ -4,7 +4,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Endpoints } from "../../types/Endpoints";
-import useGetAPI from "../../utils/useGetAPI";
+import useGetAPI from "../../hooks/UseGetAPI";
 
 interface TradesProps {
   amountToLoad?: number;

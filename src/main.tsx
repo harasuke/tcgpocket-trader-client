@@ -5,6 +5,7 @@ import App from "./App.js";
 import React from "react";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { StoreProvider } from "./stores/StoreContext";
+import { AnimatePresence } from "motion/react";
 
 const CLERK_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -16,7 +17,9 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ClerkProvider publishableKey={CLERK_KEY} afterSignOutUrl="/signin">
       <StoreProvider>
-        <App />
+        <AnimatePresence mode="wait">
+          <App />
+        </AnimatePresence>
       </StoreProvider>
     </ClerkProvider>
   </StrictMode>,

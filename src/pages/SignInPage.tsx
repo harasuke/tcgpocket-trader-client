@@ -1,23 +1,23 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useSignIn, SignedIn, SignedOut, useClerk } from "@clerk/clerk-react";
 import { isClerkAPIResponseError } from "@clerk/clerk-react/errors";
 import { ClerkAPIError } from "@clerk/types";
-import InputPassword from "../components/InputPassword";
-import InputEmail from "../components/InputEmail";
-import { useAuthToken } from "../utils/UseAuthToken";
-import { StoreContext } from "../stores/StoreContext";
+import InputPassword from "../components/AuthForm/InputPassword";
+import InputEmail from "../components/AuthForm/InputEmail";
+import { Button } from "antd";
+import { NavLink } from "react-router";
+import { AnimatePresence, motion } from "motion/react";
 
 interface SignInProps {}
 
 export default function SignInPage({}: SignInProps) {
-  const storeContext = useContext(StoreContext);
-  const { getToken } = useAuthToken();
+  const [visible, setVisible] = useState(true);
   const { isLoaded, signIn, setActive } = useSignIn();
   const { signOut } = useClerk();
 
   const [errors, setErrors] = useState<ClerkAPIError[]>();
-  const email = useRef<HTMLInputElement>(null);
-  const password = useRef<HTMLInputElement>(null);
+  const email = useRef<any>(null);
+  const password = useRef<any>(null);
 
   if (!isLoaded) {
     return null;
@@ -28,16 +28,16 @@ export default function SignInPage({}: SignInProps) {
     setErrors(undefined);
 
     try {
+      console.log("valori form email: ", email, "psw:", password);
       const result = await signIn.create({
         strategy: "password",
-        password: password?.current?.value ?? "",
-        identifier: email?.current?.value ?? "",
+        password: password?.current?.input?.value ?? "",
+        identifier: email?.current?.input?.value ?? "",
       });
 
       console.log("result>>>>>", result);
 
       if (result.status === "complete") {
-        storeContext?.setIsLoggedIn(true);
         await setActive({ session: result.createdSessionId });
       }
     } catch (err) {
@@ -50,29 +50,70 @@ export default function SignInPage({}: SignInProps) {
 
   return (
     <>
-      <div>{errors?.map((x, index) => <p key={index}>{x.longMessage}</p>)}</div>
-      <div>lo sto calcolando da solo: {storeContext?.isLoggedIn.toString()}</div>
-      <br />
-      <form className="flex flex-col">
-        <InputEmail errors={errors} ref={email}></InputEmail>
-        <InputPassword errors={errors} ref={password}></InputPassword>
-        <button onClick={(e) => logIn(e)}>Log In</button>
-      </form>
-      <button
-        onClick={async () => {
-          console.log(await getToken());
-        }}
-      >
-        Prendi il token{" "}
-      </button>
-
-      <br />
-      <SignedIn>
+      {/* <div>{errors?.map((x, index) => <p key={index}>{x.longMessage}</p>)}</div> */}
+      {/* <br /> */}
+      <AnimatePresence mode="wait">
+        {visible && (
+          <motion.form
+            className="mx-auto mt-4 flex w-[90%] max-w-[400px] flex-col items-center rounded-md border-1 border-gray-200 shadow-md"
+            initial={{ scale: 0 }}
+            animate={{
+              scale: 1,
+              transition: {
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+                bounce: 0.4,
+              },
+            }}
+            exit={{
+              scale: 0,
+              transition: {
+                type: "linear",
+                duration: 0.5,
+              },
+            }}
+          >
+            <img
+              className="w-40"
+              src="https://ptcgpocket.gg/wp-content/uploads/sites/51/2024/08/Pokemon-Trading-Card-Game-Pocket-Logo.webp"
+            ></img>
+            <InputEmail className="w-full p-3" errors={errors} ref={email} />
+            <InputPassword className="w-full p-3" errors={errors} ref={password} />
+            <Button type="primary" className="m-3 max-w-[50%]" onClick={(e) => logIn(e)}>
+              Log In
+            </Button>
+            <SignedOut>
+              <span className="my-3 text-sm">
+                Don't have an account yet ?!{" "}
+                <NavLink to="/register" className="text-blue-500 underline" onClick={() => setVisible((v) => !v)}>
+                  Register
+                </NavLink>
+              </span>
+            </SignedOut>
+            {/* <SignedIn>
+              <button
+                onClick={() => {
+                  signOut({ redirectUrl: "/signin" });
+                }}
+              >
+                Log out
+              </button>
+            </SignedIn> */}
+          </motion.form>
+        )}
+      </AnimatePresence>
+      {/* <SignedIn>
         sei loggato, incredibile
         <br />
-        <button onClick={() => signOut({ redirectUrl: "/signin" })}>Log out</button>
-      </SignedIn>
-      <SignedOut>In questo momento devi ancora fare il login</SignedOut>
+        <button
+          onClick={() => {
+            signOut({ redirectUrl: "/signin" });
+          }}
+        >
+          Log out
+        </button>
+      </SignedIn> */}
     </>
   );
 }

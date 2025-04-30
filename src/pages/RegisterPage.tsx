@@ -1,61 +1,110 @@
-import { useSignUp, SignedOut, SignedIn, useClerk } from "@clerk/clerk-react";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useSignUp, SignedOut } from "@clerk/clerk-react";
+import { ClerkAPIError } from "@clerk/types";
+import InputPassword from "../components/AuthForm/InputPassword";
+import InputEmail from "../components/AuthForm/InputEmail";
+import { Button } from "antd";
+import { InputFriendcode } from "../components/AuthForm/InputFriendcode";
+import { isClerkAPIResponseError } from "@clerk/clerk-react/errors";
+import { AnimatePresence, motion } from "motion/react";
 
 interface RegisterPageProps {}
 
 export default function RegisterPage({}: RegisterPageProps) {
-  const { isLoaded, signUp, setActive } = useSignUp();
-  const { signOut } = useClerk();
 
-  const email = useRef<HTMLInputElement>(null);
-  const password = useRef<HTMLInputElement>(null);
-  const friendCode = useRef<HTMLInputElement>(null);
+  const [visible, setVisible] = useState(true);
+  const { isLoaded, signUp, setActive } = useSignUp();
+
+  const [errors, setErrors] = useState<ClerkAPIError[]>();
+  const email = useRef<any>(null);
+  const password = useRef<any>(null);
+  let friendCode: string = "";
 
   if (!isLoaded) return;
 
   const register = async (e) => {
     e.preventDefault();
 
+    console.log('codice', friendCode);
     try {
       const result = await signUp?.create({
-        emailAddress: email?.current?.value,
-        password: password?.current?.value,
+        emailAddress: email?.current?.input?.value ?? "",
+        password: password?.current?.input?.value ?? "",
         unsafeMetadata: {
-          friendCode: friendCode?.current?.value,
+          friendCode: friendCode ?? "",
         },
       });
+
+      console.log("result after register>", result);
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
       }
     } catch (err) {
+      console.log(err.errors);
+      if (isClerkAPIResponseError(err)) setErrors(err.errors);
       console.warn("qui >>>", err);
     }
   };
 
   return (
     <>
-      <SignedIn>
-        Before registering, you must{" "}
-        <button onClick={() => signOut({ redirectUrl: "/register" })}>Log out</button>
-      </SignedIn>
-      <SignedOut>
-        <form className="flex flex-col">
-          <input placeholder="email" id="email" name="email" ref={email}></input>
-          <input placeholder="password" id="password" name="password" ref={password}></input>
-          <input
-            placeholder="friendCode"
-            id="friendCode"
-            name="friendCode"
-            ref={friendCode}
-          ></input>
-          <button onClick={(e) => register(e)}>Register</button>
-          <p>
-            Already registered ? Go to <NavLink to="/signin">Log In</NavLink>
-          </p>
-        </form>
-      </SignedOut>
+      {/* <div>{errors?.map((x, index) => <p key={index}>{x.longMessage}</p>)}</div>
+      <br /> */}
+      <AnimatePresence mode="wait">
+        {visible && (
+          <motion.form
+            className="mx-auto mt-4 flex w-[90%] max-w-[400px] flex-col items-center rounded-md border-1 border-gray-200 shadow-md"
+            initial={{ scale: 0 }}
+            animate={{
+              scale: 1,
+              transition: {
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+                bounce: 0.4,
+              },
+            }}
+            exit={{
+              scale: 0,
+              transition: {
+                type: "linear",
+                duration: 0.5,
+              },
+            }}
+          >
+            <img
+              className="w-40"
+              src="https://ptcgpocket.gg/wp-content/uploads/sites/51/2024/08/Pokemon-Trading-Card-Game-Pocket-Logo.webp"
+            ></img>
+            <InputEmail className="w-full p-3" errors={errors} ref={email} />
+            <InputPassword className="w-full p-3" errors={errors} ref={password} />
+            <InputFriendcode onCodeChange={(code) => friendCode = code} />
+            <Button type="primary" className="m-3 max-w-[50%]" onClick={(e) => register(e)}>
+              Register
+            </Button>
+            <SignedOut>
+              <span className="my-3 text-sm">
+                Already registered ? Go to{" "}
+                <NavLink className="text-blue-500 underline" to="/signin" onClick={() => setVisible((v) => !v)}>
+                  Log In
+                </NavLink>
+              </span>
+            </SignedOut>
+            {/* <SignedIn>
+          <button
+            onClick={() => {
+              signOut({ redirectUrl: "/signin" });
+            }}
+          >
+            Log out
+          </button>
+        </SignedIn> */}
+          </motion.form>
+        )}
+      </AnimatePresence>
     </>
   );
 }
+//8153-9734-1789-6429

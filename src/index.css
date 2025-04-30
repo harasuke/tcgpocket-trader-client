@@ -64,3 +64,11 @@ h6 {
   z-index: 10;
   margin-left: 20%;
 }
+
+.friend-code-label{
+  color: rgba(0,0,0,.33);
+  font-size: small;
+  width: 100%;
+  align-items: start;
+  @apply pr-3 pl-3 pt-3 pb-2
+}

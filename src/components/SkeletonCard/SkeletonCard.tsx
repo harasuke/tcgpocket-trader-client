@@ -18,11 +18,11 @@ const SkeletonCard = ({ index, extraClasses}: SkeletonCardProps) => {
       animate={{
         backgroundPositionX: "-200%",
       }}
-      // transition={{
-      //   duration: 3,
-      //   repeat: Infinity,
-      //   ease: "linear",
-      // }}
+      transition={{
+        duration: 2.3,
+        repeat: Infinity,
+        ease: "linear",
+      }}
     ></motion.div>
   );
 };
