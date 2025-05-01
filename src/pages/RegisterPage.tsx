@@ -12,7 +12,6 @@ import { AnimatePresence, motion } from "motion/react";
 interface RegisterPageProps {}
 
 export default function RegisterPage({}: RegisterPageProps) {
-
   const [visible, setVisible] = useState(true);
   const { isLoaded, signUp, setActive } = useSignUp();
 
@@ -23,10 +22,10 @@ export default function RegisterPage({}: RegisterPageProps) {
 
   if (!isLoaded) return;
 
-  const register = async (e) => {
+  const register = async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
 
-    console.log('codice', friendCode);
+    console.log("codice", friendCode);
     try {
       const result = await signUp?.create({
         emailAddress: email?.current?.input?.value ?? "",
@@ -41,7 +40,7 @@ export default function RegisterPage({}: RegisterPageProps) {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(err.errors);
       if (isClerkAPIResponseError(err)) setErrors(err.errors);
       console.warn("qui >>>", err);
@@ -49,13 +48,17 @@ export default function RegisterPage({}: RegisterPageProps) {
   };
 
   return (
-    <>
-      {/* <div>{errors?.map((x, index) => <p key={index}>{x.longMessage}</p>)}</div>
-      <br /> */}
+    <div
+      className="absolute top-0 h-screen w-screen"
+      style={{
+        backgroundImage: `url("/background-energy-pattern.png")`,
+        backgroundSize: `300px, auto`,
+      }}
+    >
       <AnimatePresence mode="wait">
         {visible && (
           <motion.form
-            className="mx-auto mt-4 flex w-[90%] max-w-[400px] flex-col items-center rounded-md border-1 border-gray-200 shadow-md"
+            className="mx-auto mt-[15em] flex w-[90%] max-w-[400px] flex-col items-center rounded-md border-1 border-gray-200 bg-white shadow-md"
             initial={{ scale: 0 }}
             animate={{
               scale: 1,
@@ -80,14 +83,18 @@ export default function RegisterPage({}: RegisterPageProps) {
             ></img>
             <InputEmail className="w-full p-3" errors={errors} ref={email} />
             <InputPassword className="w-full p-3" errors={errors} ref={password} />
-            <InputFriendcode onCodeChange={(code) => friendCode = code} />
+            <InputFriendcode onCodeChange={(code) => (friendCode = code)} />
             <Button type="primary" className="m-3 max-w-[50%]" onClick={(e) => register(e)}>
               Register
             </Button>
             <SignedOut>
               <span className="my-3 text-sm">
                 Already registered ? Go to{" "}
-                <NavLink className="text-blue-500 underline" to="/signin" onClick={() => setVisible((v) => !v)}>
+                <NavLink
+                  className="text-blue-500 underline"
+                  to="/signin"
+                  onClick={() => setVisible((v) => !v)}
+                >
                   Log In
                 </NavLink>
               </span>
@@ -104,7 +111,7 @@ export default function RegisterPage({}: RegisterPageProps) {
           </motion.form>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }
 //8153-9734-1789-6429

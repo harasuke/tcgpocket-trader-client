@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Card from "./Card";
 import SkeletonCard from "./SkeletonCard/SkeletonCard";
 import { CardType } from "../types/CardType";

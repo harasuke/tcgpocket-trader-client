@@ -73,7 +73,7 @@ h6 {
   @apply pr-3 pl-3 pt-3 pb-2
 }
 
-.wrap-original-transform {
+/* .wrap-original-transform {
   perspective: 280px !important;
   transform-style: preserve-3d !important;
   perspective-origin: 43% 50% !important;
@@ -81,13 +81,22 @@ h6 {
 
 .original-transform {
   transform: rotateX(-31deg) rotateY(-21deg) !important;
+} */
+.wrap-original-transform {
+  perspective: 191px;
+  transform-style: preserve-3d;
+  perspective-origin: 43% 50%;
+}
+
+.original-transform {
+  transform: rotateX(-8deg) rotateY(8deg);
 }
 
 /* Hero Section */
 @font-face {
   font-family: "FlexoRegular";
   src: local("FlexoRegular"),
-   url("./assets/fonts/Flexo-Regular.ttf") format("truetype");
+   url("/public/fonts/Flexo-Regular.ttf") format("truetype");
 }
 
 .hero-font {

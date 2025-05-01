@@ -2,8 +2,8 @@ import React, { useRef, useState } from "react";
 import { useSignIn, SignedOut } from "@clerk/clerk-react";
 import { isClerkAPIResponseError } from "@clerk/clerk-react/errors";
 import { ClerkAPIError } from "@clerk/types";
-import InputPassword from "../components/AuthForm/InputPassword";
-import InputEmail from "../components/AuthForm/InputEmail";
+import InputPassword from "src/components/AuthForm/InputPassword";
+import InputEmail from "src/components/AuthForm/InputEmail";
 import { Button } from "antd";
 import { NavLink } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
@@ -18,15 +18,11 @@ export default function SignInPage({}: SignInProps) {
   const email = useRef<any>(null);
   const password = useRef<any>(null);
 
-  const backgroundCards = [
-    "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-A/P-A_042_EN.webp"
-  ];
-
   if (!isLoaded) {
     return null;
   }
 
-  const logIn = async (e) => {
+  const logIn = async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
     setErrors(undefined);
 
@@ -52,12 +48,17 @@ export default function SignInPage({}: SignInProps) {
   };
 
   return (
-    <>
-
+    <div
+      className="absolute top-0 h-screen w-screen"
+      style={{
+        backgroundImage: `url("/background-energy-pattern.png")`,
+        backgroundSize: `300px, auto`,
+      }}
+    >
       <AnimatePresence mode="wait">
         {visible && (
           <motion.form
-            className="mx-auto mt-4 flex w-[90%] max-w-[400px] flex-col items-center rounded-md border-1 border-gray-200 shadow-md"
+            className="mx-auto mt-[15em] flex w-[90%] max-w-[400px] flex-col items-center rounded-md border-1 border-gray-200 bg-white shadow-md"
             initial={{ scale: 0 }}
             animate={{
               scale: 1,
@@ -100,6 +101,6 @@ export default function SignInPage({}: SignInProps) {
           </motion.form>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }
