@@ -96,7 +96,7 @@ h6 {
 @font-face {
   font-family: "FlexoRegular";
   src: local("FlexoRegular"),
-   url("/public/fonts/Flexo-Regular.ttf") format("truetype");
+   url("/fonts/Flexo-Regular.ttf") format("truetype");
 }
 
 .hero-font {

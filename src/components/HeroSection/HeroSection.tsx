@@ -4,24 +4,13 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
+function randomHeroCardId() {
+  return Math.floor(Math.random() * HeroCards.length);
+}
+
 const HeroSection = () => {
-  function randomHeroCardId() {
-    return Math.floor(Math.random() * HeroCards.length);
-  }
-
-  function changeCard(changeOrder: "prev" | "next") {
-    if (currentHeroCardId == HeroCards.length - 1 && changeOrder === "next")
-      return setCurrentHeroCardId(0);
-
-    if (currentHeroCardId === 0 && changeOrder === "prev")
-      return setCurrentHeroCardId(HeroCards.length - 1);
-
-    if (changeOrder === "next") return setCurrentHeroCardId(currentHeroCardId + 1);
-
-    if (changeOrder === "prev") return setCurrentHeroCardId(currentHeroCardId - 1);
-  }
-
   const [currentHeroCardId, setCurrentHeroCardId] = useState<number>(randomHeroCardId());
+  const [isLoadingVideo, setIsLoadingVideo] = useState(false);
 
   const slideSettings = {
     dots: false,
@@ -37,7 +26,17 @@ const HeroSection = () => {
 
   return (
     //aspect-[2/2.8] -translate-y-[-10%]
-    <div className="relative flex h-[95vh] w-full items-center justify-center overflow-hidden">
+    <div className="relative flex h-[95vh] w-full items-center justify-center overflow-hidden bg-black">
+      <img
+        className="absolute z-1 w-full !max-w-none overflow-hidden bg-cover bg-no-repeat"
+        style={{
+          transform: "scaleX(1.1)",
+          filter: "blur(2px) brightness(45%)",
+          display: isLoadingVideo ? "visible" : "none",
+        }}
+        src={HeroCards[currentHeroCardId].fallback}
+      />
+
       <video
         key={HeroCards[currentHeroCardId].videoUrl}
         style={{
@@ -45,8 +44,17 @@ const HeroSection = () => {
           filter: "blur(2px) brightness(45%)",
         }}
         autoPlay={true}
-        muted
         loop={true}
+        muted
+        preload={"auto"}
+        onLoadStart={() => {
+          console.log("start loading video");
+          setIsLoadingVideo(true);
+        }}
+        onLoadedData={() => {
+          console.log("finished loading video");
+          setIsLoadingVideo(false);
+        }}
         className="absolute z-0 w-full !max-w-none overflow-hidden bg-cover bg-no-repeat"
       >
         <source
@@ -67,7 +75,6 @@ const HeroSection = () => {
           {...slideSettings}
           afterChange={(newIndex) => {
             setCurrentHeroCardId(newIndex);
-            console.log(newIndex, currentHeroCardId);
           }}
         >
           {HeroCards.map((c, i) => (
