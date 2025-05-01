@@ -11,7 +11,7 @@ const Navbar = () => {
   const items: MenuProps["items"] = menuItems;
 
   return (
-    <div className="relative top-0 flex w-full flex-row justify-between bg-blue-500">
+    <div className="sticky top-0 z-100 flex h-[5em] w-full flex-row justify-between bg-blue-500">
       <div className="m-3 self-center">
         <img
           className="w-20"

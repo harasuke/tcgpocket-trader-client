@@ -72,3 +72,24 @@ h6 {
   align-items: start;
   @apply pr-3 pl-3 pt-3 pb-2
 }
+
+.wrap-original-transform {
+  perspective: 280px !important;
+  transform-style: preserve-3d !important;
+  perspective-origin: 43% 50% !important;
+}
+
+.original-transform {
+  transform: rotateX(-31deg) rotateY(-21deg) !important;
+}
+
+/* Hero Section */
+@font-face {
+  font-family: "FlexoRegular";
+  src: local("FlexoRegular"),
+   url("./assets/fonts/Flexo-Regular.ttf") format("truetype");
+}
+
+.hero-font {
+  font-family: "FlexoRegular", arial, sans-serif;
+}

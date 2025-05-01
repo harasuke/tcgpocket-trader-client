@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { useSignIn, SignedIn, SignedOut, useClerk } from "@clerk/clerk-react";
+import { useSignIn, SignedOut } from "@clerk/clerk-react";
 import { isClerkAPIResponseError } from "@clerk/clerk-react/errors";
 import { ClerkAPIError } from "@clerk/types";
 import InputPassword from "../components/AuthForm/InputPassword";
@@ -13,11 +13,14 @@ interface SignInProps {}
 export default function SignInPage({}: SignInProps) {
   const [visible, setVisible] = useState(true);
   const { isLoaded, signIn, setActive } = useSignIn();
-  const { signOut } = useClerk();
 
   const [errors, setErrors] = useState<ClerkAPIError[]>();
   const email = useRef<any>(null);
   const password = useRef<any>(null);
+
+  const backgroundCards = [
+    "https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/P-A/P-A_042_EN.webp"
+  ];
 
   if (!isLoaded) {
     return null;
@@ -50,8 +53,7 @@ export default function SignInPage({}: SignInProps) {
 
   return (
     <>
-      {/* <div>{errors?.map((x, index) => <p key={index}>{x.longMessage}</p>)}</div> */}
-      {/* <br /> */}
+
       <AnimatePresence mode="wait">
         {visible && (
           <motion.form
@@ -86,34 +88,18 @@ export default function SignInPage({}: SignInProps) {
             <SignedOut>
               <span className="my-3 text-sm">
                 Don't have an account yet ?!{" "}
-                <NavLink to="/register" className="text-blue-500 underline" onClick={() => setVisible((v) => !v)}>
+                <NavLink
+                  to="/register"
+                  className="text-blue-500 underline"
+                  onClick={() => setVisible((v) => !v)}
+                >
                   Register
                 </NavLink>
               </span>
             </SignedOut>
-            {/* <SignedIn>
-              <button
-                onClick={() => {
-                  signOut({ redirectUrl: "/signin" });
-                }}
-              >
-                Log out
-              </button>
-            </SignedIn> */}
           </motion.form>
         )}
       </AnimatePresence>
-      {/* <SignedIn>
-        sei loggato, incredibile
-        <br />
-        <button
-          onClick={() => {
-            signOut({ redirectUrl: "/signin" });
-          }}
-        >
-          Log out
-        </button>
-      </SignedIn> */}
     </>
   );
 }
