@@ -4,7 +4,8 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
-  RouterProvider
+  RouterProvider,
+  Routes,
 } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
@@ -14,6 +15,7 @@ import ProfilePage from "./pages/ProfilePage";
 import SignInPage from "./pages/SignInPage";
 import RegisterPage from "./pages/RegisterPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
+import { CreateTradePage } from "./pages/CreateTradePage";
 
 let router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,7 +27,9 @@ let router = createBrowserRouter(
       <Route element={<ProtectedRoute to="/" condition={"loggedIn"} />}>
         <Route path="/register" element={<RegisterPage />} />
       </Route>
-      <Route path="/trades" element={<TradesPage />} />
+      <Route path="/trades" element={<TradesPage />}>
+        <Route path="create-trade" element={<CreateTradePage />} />
+      </Route>
       <Route path="/offers" element={<OffersPage />} />
       <Route path="/profile" element={<ProfilePage />} />
     </Route>,

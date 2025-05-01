@@ -1,6 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { HeroCards } from "../components/HeroSection/HeroCardList";
 import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Trades from "src/components/Trades/Trades";
+import { Outlet } from "react-router";
 
 function TradesPage() {
   const heroCards = HeroCards;
@@ -20,25 +24,10 @@ function TradesPage() {
   };
 
   return (
-    <Slider
-      className="w-[13em] rounded-xl outline-1 outline-red-500"
-      {...slideSettings}
-      // onChangeComplete={(index) => {
-      //   console.log("current is ", index);
-      // }}
-    >
-      {heroCards.map((c) => (
-        <div>ciaociao</div>
-        // <div className="wrap-original-transform">
-        //   <div className="original-transform">
-        //     <img
-        //       className={`original-transform h-auto w-[13em] rounded-xl`}
-        //       src={heroCards[currentHeroCardId].imageUrl}
-        //     ></img>
-        //   </div>
-        // </div>
-      ))}
-    </Slider>
+    <>
+      <Outlet />
+      <Trades amountToLoad={5} />
+    </>
   );
 }
 

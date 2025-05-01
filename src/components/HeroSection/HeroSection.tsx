@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { HeroCards } from "./HeroCardList";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -12,13 +12,17 @@ const HeroSection = () => {
   const [currentHeroCardId, setCurrentHeroCardId] = useState<number>(randomHeroCardId());
   const [isLoadingVideo, setIsLoadingVideo] = useState(false);
 
+  const sliderRef = useRef<any>(null);
+
   const slideSettings = {
     dots: false,
     speed: 500,
+    // autoplaySpeed: 25000,
     slidesToShow: 1,
     slidesToScroll: 1,
-    arrows: true,
-    autoplay: false,
+    // slidesToScroll: HeroCards.length,
+    arrows: false,
+    // autoplay: true,
     centerMode: false,
     swipeToSlide: true,
     initialSlide: currentHeroCardId,
@@ -44,16 +48,19 @@ const HeroSection = () => {
           filter: "blur(2px) brightness(45%)",
         }}
         autoPlay={true}
-        loop={true}
+        // loop={true}
         muted
         preload={"auto"}
+        playsInline={true}
         onLoadStart={() => {
-          console.log("start loading video");
           setIsLoadingVideo(true);
         }}
         onLoadedData={() => {
-          console.log("finished loading video");
           setIsLoadingVideo(false);
+        }}
+        onEnded={() => {
+          console.log('video has ended')
+          sliderRef.current?.slickNext()
         }}
         className="absolute z-0 w-full !max-w-none overflow-hidden bg-cover bg-no-repeat"
       >
@@ -66,16 +73,17 @@ const HeroSection = () => {
       </video>
       <div className="z-1 flex w-full flex-row items-center justify-evenly">
         <section className="hero-font text-white">
-          <h2 className="hero-font text-[3em]">Organize your trade</h2>
-          <p className="text-[1.5em]">Complete your collection</p>
+          <h2 className="hero-font text-[3em]">Organize your trades</h2>
+          <p className="text-[1.5em]">Complete your collection !</p>
         </section>
 
         <Slider
-          className="z-100 w-[20em]"
+          className="z-100 w-[20em] hero-carousel"
           {...slideSettings}
           afterChange={(newIndex) => {
             setCurrentHeroCardId(newIndex);
           }}
+          ref={sliderRef}
         >
           {HeroCards.map((c, i) => (
             <div className="wrap-original-transform pt-[2em] pl-[3em]">

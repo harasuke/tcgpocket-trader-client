@@ -9,7 +9,6 @@ function HomePage() {
   return (
     <div className="overflow-hidden" style={{ height: "calc(100vh - 5em)" }}>
       <HeroSection />
-      {/* <Trades amountToLoad={5}/> */}
     </div>
   );
 }

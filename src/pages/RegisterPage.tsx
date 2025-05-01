@@ -58,7 +58,7 @@ export default function RegisterPage({}: RegisterPageProps) {
       <AnimatePresence mode="wait">
         {visible && (
           <motion.form
-            className="mx-auto mt-[15em] flex w-[90%] max-w-[400px] flex-col items-center rounded-md border-1 border-gray-200 bg-white shadow-md"
+            className="mx-auto mt-[10em] flex w-[90%] max-w-[400px] flex-col items-center rounded-md border-1 border-gray-200 bg-white shadow-md"
             initial={{ scale: 0 }}
             animate={{
               scale: 1,

@@ -4,14 +4,16 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Endpoints } from "../../types/Endpoints";
-import useGetAPI from "../../hooks/UseGetAPI";
+import useRecentTrades from "src/hooks/api/UseRecentTrades";
 
 interface TradesProps {
   amountToLoad?: number;
 }
 
 const Trades = ({ amountToLoad = 15 }: TradesProps) => {
-  const { res: trades, loadingReq } = useGetAPI(Endpoints.MANY_TRADE(amountToLoad, "Rare"));
+  const { res: trades, loadingReq } = useRecentTrades(Endpoints.RECENT_TRADES(), {
+    limit: amountToLoad.toString(),
+  });
 
   const settings = {
     dots: true,
@@ -33,9 +35,15 @@ const Trades = ({ amountToLoad = 15 }: TradesProps) => {
         <Slider {...settings} className="m-2 rounded-xl bg-blue-200">
           {loadingReq
             ? Array.from({ length: amountToLoad }).map((_, index) => <SkeletonTrade key={index} />)
-            : trades.length > 0 &&
-              trades?.map((trade, index) => (
-                <Trade cards={trade} key={index} loading={false} extraClasses="w-full h-[500px]" />
+            : trades?.data.length > 0 &&
+              trades?.data.map((trade, index) => (
+                <Trade
+                  cards={trade.offeredCards}
+                  card={trade.wantedCard}
+                  key={index}
+                  loading={false}
+                  extraClasses="w-full h-[500px]"
+                />
               ))}
         </Slider>
       }

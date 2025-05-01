@@ -102,3 +102,8 @@ h6 {
 .hero-font {
   font-family: "FlexoRegular", arial, sans-serif;
 }
+@media (width < 48rem) {
+  .hero-carousel {
+    display: none !important;
+  }
+}
