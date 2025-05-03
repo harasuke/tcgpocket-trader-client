@@ -6,15 +6,18 @@ interface CardProps {
   url: string;
   extraClasses?: string;
   canZoom?: boolean;
+  isBatchView?: boolean;
 }
 
-const Card = ({ index, url, extraClasses, canZoom = true }: CardProps) => {
+const Card = ({ index, url, extraClasses, canZoom = true, isBatchView = false}: CardProps) => {
   const [active, setActive] = useState(false);
 
   return (
     <img
       onClick={() => (canZoom ? setActive(!active) : null)}
-      className={`${extraClasses} skeleton-card loaded-card ${active ? "zoomedInCard" : ""}`}
+      className={
+        `${extraClasses} ${active ? "zoomedInCard" : ""} ${isBatchView ? '' : 'skeleton-card loaded-card'}`
+      }
       style={index != undefined ? { ...positionBasedStyle(index) } : {}}
       src={url}
     ></img>

@@ -7,11 +7,17 @@ import useDropdownItems from "./UseDropdownItems";
 
 const Navbar = () => {
   const { menuItems } = useDropdownItems();
+  const storeContext = useContext(StoreContext);
 
   const items: MenuProps["items"] = menuItems;
 
   return (
-    <div className="sticky top-0 z-100 flex h-[5em] w-full flex-row justify-between bg-blue-500">
+    <div
+      className="navbar-transition sticky top-0 z-100 flex h-[5em] w-full flex-row justify-between"
+      style={{
+        backgroundColor: storeContext?.navbarColor,
+      }}
+    >
       <div className="m-3 self-center">
         <img
           className="w-20"

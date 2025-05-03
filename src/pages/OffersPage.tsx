@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { NavLink } from 'react-router'
 
 function OffersPage() {
   const [count, setCount] = useState(0)
@@ -7,6 +8,7 @@ function OffersPage() {
     <div>
       This is the OffersPage page
       lorem*10
+      <NavLink to="/trades/create-trade">asdfasdf</NavLink>
     </div>
   )
 }

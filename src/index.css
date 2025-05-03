@@ -12,8 +12,19 @@ body {
   box-sizing: border-box;
 }
 
+.navbar-transition {
+  transition: background-color .3s linear;
+}
+
 .navbar-btn {
   @apply m-2 inline-block rounded-md p-2 text-white hover:bg-gray-600;
+}
+
+.navbar-color {
+  background: rgba(43, 127, 255, 0.57);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8.7px);
+  -webkit-backdrop-filter: blur(8.7px);
 }
 
 .profile-btn {
@@ -102,8 +113,41 @@ h6 {
 .hero-font {
   font-family: "FlexoRegular", arial, sans-serif;
 }
+.hero-main-text {
+  margin-left: 3em;
+}
+
 @media (width < 48rem) {
   .hero-carousel {
     display: none !important;
   }
 }
+
+/* Trade Section - view card list */
+.cardex-grid {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))
+}
+
+.custom-select .ant-select-selection-item-content {
+  display: flex !important;
+  align-items: center !important;
+}
+.custom-select .ant-select-selection-item {
+  height: min-content !important;
+}
+
+.filter-badge .ant-scroll-number.ant-badge-count{
+  top: 1em;
+  right: .5em;
+}
+
+/* @media (min-width: 640px) {
+  .cardex-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .cardex-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+} */

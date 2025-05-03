@@ -10,7 +10,7 @@ interface resType {
 
 export default function useRecentTrades(
   url: string,
-  queryParams: Record<string, string> | undefined = undefined,
+  queryParams: Object | undefined = undefined,
 ): { res: resType; loadingReq: boolean } {
   const { res, loadingReq } = useGetAPI(url, queryParams);
   return { res, loadingReq };

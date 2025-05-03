@@ -4,6 +4,9 @@ export const Endpoints = {
   SINGLE_CARD: (card: string) =>
     `/api/card/${card}`,
 
+  CARD_LIST: () =>
+    `/api/card/list`,
+
   RECENT_TRADES: () => 
     `/api/trade/list`,
 
@@ -11,5 +14,5 @@ export const Endpoints = {
     `/api/card/batch/${amount}/${rarity}`,
 
   TRADE: (id: string) =>
-    `/api/trade/${id}`
+    `/api/trade/${id}`,
 } as const;

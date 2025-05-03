@@ -4,7 +4,8 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Trades from "src/components/Trades/Trades";
-import { Outlet } from "react-router";
+import { NavLink, Outlet } from "react-router";
+import { Button } from "antd";
 
 function TradesPage() {
   const heroCards = HeroCards;
@@ -25,7 +26,7 @@ function TradesPage() {
 
   return (
     <>
-      <Outlet />
+      <Button><NavLink to="/trades/create-trade">Create a trade</NavLink></Button>
       <Trades amountToLoad={5} />
     </>
   );

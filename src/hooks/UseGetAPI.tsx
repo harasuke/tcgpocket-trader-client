@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 
-export default function useGetAPI(url: string, queryParams: Record<string, string> | undefined = undefined) {
+export default function useGetAPI(
+  url: string,
+  queryParams: Object | undefined = undefined,
+  enabled: boolean = true
+) {
   const { getToken, isLoaded } = useAuth();
   const [res, setRes] = useState<any>([]);
   const [loadingReq, setLoadingReq] = useState(true);
+  const [isEnabled, setIsEnabled] = useState(enabled);
 
   useEffect(() => {
+    if (!isEnabled) return;
     if (!isLoaded) return;
+    setLoadingReq(true);
 
     (async function request() {
       try {
         const x = await getToken();
         const res = await getRequest(url, queryParams, x);
-        
-        console.log(url, queryParams, res)
+
+        console.log(url, queryParams, res);
 
         setRes(res);
         setLoadingReq(false);
@@ -22,17 +29,30 @@ export default function useGetAPI(url: string, queryParams: Record<string, strin
         console.log(url, "Exception on get request > ", err);
       }
     })();
-  }, [isLoaded]);
+  }, [isLoaded, JSON.stringify(queryParams), isEnabled]);
 
-  return { res, loadingReq };
+  return { res, loadingReq, setIsEnabled };
 }
 
 export const getRequest = async (
   url: string,
-  queryParams: Record<string, string> | undefined,
+  queryParams: Object | undefined,
   token: string | null = null,
 ) => {
-  const searchParams: string = queryParams ? "?" + new URLSearchParams(queryParams) : "";
+  const params = new URLSearchParams();
+
+  queryParams &&
+    Object.entries(queryParams).forEach(([key, val]) => {
+      if (Array.isArray(val))
+        for (let v of val)
+          params.append(`${key}`, v);
+      else
+        params.set(`${key}`, val);
+    });
+
+  const searchParams: string = queryParams ? "?" + params : "";
+
+  console.log('i parametri convertiti ', searchParams)
 
   const headers = {};
   headers["Content-Type"] = "application/json";

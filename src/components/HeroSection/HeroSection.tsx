@@ -1,19 +1,21 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { HeroCards } from "./HeroCardList";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { StoreContext } from "src/stores/StoreContext";
 
 function randomHeroCardId() {
   return Math.floor(Math.random() * HeroCards.length);
 }
 
 const HeroSection = () => {
+  const storeContext = useContext(StoreContext);
   const [currentHeroCardId, setCurrentHeroCardId] = useState<number>(randomHeroCardId());
   const [isLoadingVideo, setIsLoadingVideo] = useState(false);
 
   const sliderRef = useRef<any>(null);
-
+  
   const slideSettings = {
     dots: false,
     speed: 500,
@@ -27,6 +29,10 @@ const HeroSection = () => {
     swipeToSlide: true,
     initialSlide: currentHeroCardId,
   };
+
+  useEffect(() => {
+    storeContext?.setNavbarColor(HeroCards[currentHeroCardId].mainColor);
+  }, [])
 
   return (
     //aspect-[2/2.8] -translate-y-[-10%]
@@ -72,7 +78,7 @@ const HeroSection = () => {
         Your browser does not support the video tag.
       </video>
       <div className="z-1 flex w-full flex-row items-center justify-evenly">
-        <section className="hero-font text-white">
+        <section className="hero-main-text hero-font text-white">
           <h2 className="hero-font text-[3em]">Organize your trades</h2>
           <p className="text-[1.5em]">Complete your collection !</p>
         </section>
@@ -82,6 +88,7 @@ const HeroSection = () => {
           {...slideSettings}
           afterChange={(newIndex) => {
             setCurrentHeroCardId(newIndex);
+            storeContext?.setNavbarColor(HeroCards[newIndex].mainColor)
           }}
           ref={sliderRef}
         >
