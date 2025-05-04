@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 
-export default function useGetAPI(
-  url: string,
-  queryParams: Object | undefined = undefined,
-  enabled: boolean = true
-) {
+export default function useGetAPI(url: string, queryParams: Object | undefined = undefined) {
   const { getToken, isLoaded } = useAuth();
   const [res, setRes] = useState<any>([]);
   const [loadingReq, setLoadingReq] = useState(true);
-  const [isEnabled, setIsEnabled] = useState(enabled);
 
   useEffect(() => {
-    if (!isEnabled) return;
     if (!isLoaded) return;
     setLoadingReq(true);
 
@@ -29,9 +23,9 @@ export default function useGetAPI(
         console.log(url, "Exception on get request > ", err);
       }
     })();
-  }, [isLoaded, JSON.stringify(queryParams), isEnabled]);
+  }, [isLoaded, JSON.stringify(queryParams)]);
 
-  return { res, loadingReq, setIsEnabled };
+  return { res, loadingReq };
 }
 
 export const getRequest = async (
@@ -40,22 +34,16 @@ export const getRequest = async (
   token: string | null = null,
 ) => {
   const params = new URLSearchParams();
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
 
   queryParams &&
     Object.entries(queryParams).forEach(([key, val]) => {
-      if (Array.isArray(val))
-        for (let v of val)
-          params.append(`${key}`, v);
-      else
-        params.set(`${key}`, val);
+      if (Array.isArray(val)) for (let v of val) params.append(`${key}`, v);
+      else params.set(`${key}`, val);
     });
-
   const searchParams: string = queryParams ? "?" + params : "";
-
-  console.log('i parametri convertiti ', searchParams)
-
-  const headers = {};
-  headers["Content-Type"] = "application/json";
 
   if (token != null) headers["Authorization"] = `Bearer ${token}`;
 

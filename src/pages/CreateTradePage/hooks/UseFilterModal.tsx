@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
-import { FiltersForm } from "./FiltersForm";
-import { Filters } from "./CreateTradePage";
+import { FiltersForm } from "../components/FiltersForm";
+import { Filters } from "../CreateTradePage";
 
 export default function useFilterModal(
   setFilters: React.Dispatch<React.SetStateAction<Filters>>,
   selectedFilters: Filters,
   setSelectedFilters: React.Dispatch<React.SetStateAction<Filters>>,
-  setIsEnabled: React.Dispatch<React.SetStateAction<boolean>>,
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
 ) {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +17,6 @@ export default function useFilterModal(
       title={<div className="w-full text-center text-4xl">Filters</div>}
       closable={false}
       onCancel={() => setIsOpen(false)}
-      afterOpenChange={() => setIsEnabled(false)}
       width={{
         xs: "90%",
         sm: "80%",
@@ -43,7 +41,6 @@ export default function useFilterModal(
             onClick={() => {
               setCurrentPage(1);
               setFilters(selectedFilters);
-              setIsEnabled(true);
               setIsOpen(false);
             }}
           >

@@ -27,14 +27,13 @@ export default function SignInPage({}: SignInProps) {
     setErrors(undefined);
 
     try {
-      console.log("valori form email: ", email, "psw:", password);
       const result = await signIn.create({
         strategy: "password",
         password: password?.current?.input?.value ?? "",
         identifier: email?.current?.input?.value ?? "",
       });
 
-      console.log("result>>>>>", result);
+      console.log(result);
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });

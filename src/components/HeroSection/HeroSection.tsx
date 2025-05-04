@@ -65,7 +65,6 @@ const HeroSection = () => {
           setIsLoadingVideo(false);
         }}
         onEnded={() => {
-          console.log('video has ended')
           sliderRef.current?.slickNext()
         }}
         className="absolute z-0 w-full !max-w-none overflow-hidden bg-cover bg-no-repeat"

@@ -14,6 +14,8 @@ export enum CardRarity {
   RARE = "Rare",
   UNCOMMON = 'Uncommon',
   COMMON = 'Common',
+  // ONE_SHINY_STAR = 'One shiny star',
+  // TWO_SHINY_STAR = 'Two shiny star',
 }
 
 export type CardRarityType = keyof typeof CardRarity

@@ -25,7 +25,6 @@ export default function RegisterPage({}: RegisterPageProps) {
   const register = async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
 
-    console.log("codice", friendCode);
     try {
       const result = await signUp?.create({
         emailAddress: email?.current?.input?.value ?? "",
@@ -35,13 +34,11 @@ export default function RegisterPage({}: RegisterPageProps) {
         },
       });
 
-      console.log("result after register>", result);
-
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
       }
     } catch (err: any) {
-      console.log(err.errors);
+      console.log(err?.errors);
       if (isClerkAPIResponseError(err)) setErrors(err.errors);
       console.warn("qui >>>", err);
     }

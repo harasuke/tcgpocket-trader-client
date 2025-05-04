@@ -6,6 +6,9 @@ import React from "react";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { StoreProvider } from "./stores/StoreContext";
 import { AnimatePresence } from "motion/react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { TouchBackend } from "react-dnd-touch-backend";
 
 const CLERK_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -18,7 +21,10 @@ createRoot(document.getElementById("root")!).render(
     <ClerkProvider publishableKey={CLERK_KEY} afterSignOutUrl="/signin">
       <StoreProvider>
         <AnimatePresence mode="wait">
+        {/* <DndProvider backend={isTouchDevice ? TouchBackend : HTML5Backend}> */}
+        <DndProvider backend={HTML5Backend}>
           <App />
+          </DndProvider>
         </AnimatePresence>
       </StoreProvider>
     </ClerkProvider>

@@ -13,8 +13,7 @@ export default function useSetSearchFilters(
 ): {
   res: resType;
   loadingReq: boolean;
-  setIsEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 } {
-  const { res, loadingReq, setIsEnabled } = useGetAPI(url, queryParams);
-  return { res, loadingReq, setIsEnabled };
+  const { res, loadingReq } = useGetAPI(url, queryParams);
+  return { res, loadingReq };
 }
