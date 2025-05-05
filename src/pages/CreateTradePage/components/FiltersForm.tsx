@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Form, Select } from "antd";
 import { Filters } from "../CreateTradePage";
 import { Endpoints } from "src/types/Endpoints";
 import useSearchFiltersOptions from "../hooks/UseSearchFiltersOptions";
+import useDetectDevice from "src/hooks/UseDetectDevice";
 
 interface FiltersFormProps {
   selectedFilters: Filters;
@@ -10,6 +11,8 @@ interface FiltersFormProps {
 }
 
 export const FiltersForm = ({ selectedFilters, setSelectedFilters }: FiltersFormProps) => {
+  const { screenWidth } = useDetectDevice();
+
   const { cardElementOptions, cardRarityOptions, expansionOtions, packOptions, typeOptions } =
     useSearchFiltersOptions();
 
@@ -79,52 +82,101 @@ export const FiltersForm = ({ selectedFilters, setSelectedFilters }: FiltersForm
       ></Select>
 
       {/* Card Set (expansion + pack) */}
-      <div className="flex gap-2">
-        <Select
-          className="custom-select"
-          allowClear
-          mode="multiple"
-          placeholder="Expansion Set"
-          options={expansionOtions}
-          onChange={(changes) => {
-            setSelectedFilters({ ...selectedFilters, set: changes });
-          }}
-          style={{
-            width: "100%",
-          }}
-          optionRender={(e) => (
-            <div className="flex items-center">
-              <img
-                className="mr-6 h-[2em]"
-                src={Endpoints.STORAGE_BUCKET(`expansion-set-logos/${e.value}.webp`)}
-              ></img>
-              <span className="text-dark">{e.value}</span>
-            </div>
-          )}
-        ></Select>
-        <Select
-          className="custom-select"
-          allowClear
-          mode="multiple"
-          placeholder="Card Packs"
-          options={packOptions}
-          onChange={(changes) => {
-            setSelectedFilters({ ...selectedFilters, pack: changes });
-          }}
-          style={{
-            width: "100%",
-          }}
-          optionRender={(e) => (
-            <div className="flex items-center">
-              <img
-                className="mr-6 h-[2em]"
-                src={Endpoints.STORAGE_BUCKET(`booster-packs/${e.value}.webp`)}
-              ></img>
-              <span className="text-dark">{e.value}</span>
-            </div>
-          )}
-        ></Select>
-      </div>
+      {screenWidth >= 768 ? (
+        <div className="flex gap-2">
+          <Select
+            className="custom-select"
+            allowClear
+            mode="multiple"
+            placeholder="Expansion Set"
+            options={expansionOtions}
+            onChange={(changes) => {
+              setSelectedFilters({ ...selectedFilters, set: changes });
+            }}
+            style={{
+              width: "100%",
+            }}
+            optionRender={(e) => (
+              <div className="flex items-center">
+                <img
+                  className="mr-6 h-[2em]"
+                  src={Endpoints.STORAGE_BUCKET(`expansion-set-logos/${e.value}.webp`)}
+                ></img>
+                <span className="text-dark">{e.value}</span>
+              </div>
+            )}
+          ></Select>
+          <Select
+            className="custom-select"
+            allowClear
+            mode="multiple"
+            placeholder="Card Packs"
+            options={packOptions}
+            onChange={(changes) => {
+              setSelectedFilters({ ...selectedFilters, pack: changes });
+            }}
+            style={{
+              width: "100%",
+            }}
+            optionRender={(e) => (
+              <div className="flex items-center">
+                <img
+                  className="mr-6 h-[2em]"
+                  src={Endpoints.STORAGE_BUCKET(`booster-packs/${e.value}.webp`)}
+                ></img>
+                <span className="text-dark">{e.value}</span>
+              </div>
+            )}
+          ></Select>
+        </div>
+      ) : (
+        <>
+          <Select
+            className="custom-select"
+            allowClear
+            mode="multiple"
+            placeholder="Expansion Set"
+            options={expansionOtions}
+            onChange={(changes) => {
+              setSelectedFilters({ ...selectedFilters, set: changes });
+            }}
+            style={{
+              width: "100%",
+            }}
+            optionRender={(e) => (
+              <div className="flex items-center">
+                <img
+                  className="mr-6 h-[2em]"
+                  src={Endpoints.STORAGE_BUCKET(`expansion-set-logos/${e.value}.webp`)}
+                ></img>
+                <span className="text-dark">{e.value}</span>
+              </div>
+            )}
+          ></Select>
+          <Select
+            className="custom-select"
+            allowClear
+            mode="multiple"
+            placeholder="Card Packs"
+            options={packOptions}
+            onChange={(changes) => {
+              setSelectedFilters({ ...selectedFilters, pack: changes });
+            }}
+            style={{
+              width: "100%",
+            }}
+            optionRender={(e) => (
+              <div className="flex items-center">
+                <img
+                  className="mr-6 h-[2em]"
+                  src={Endpoints.STORAGE_BUCKET(`booster-packs/${e.value}.webp`)}
+                ></img>
+                <span className="text-dark">{e.value}</span>
+              </div>
+            )}
+          ></Select>
+        </>
+      )}
     </Form>
   );
 };

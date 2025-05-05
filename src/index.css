@@ -128,6 +128,17 @@ h6 {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
+@media (width <= 768px) {
+  .cardex-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+  }
+  .card-searcher {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}
+
+
 .custom-select .ant-select-selection-item-content {
   display: flex !important;
   align-items: center !important;
@@ -139,6 +150,10 @@ h6 {
 .filter-badge .ant-scroll-number.ant-badge-count{
   top: 1em;
   right: .5em;
+}
+
+.search-block {
+  transition: all .5s ease-in;
 }
 
 /* @media (min-width: 640px) {

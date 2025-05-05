@@ -11,6 +11,7 @@ import useSetSearchFilters from "src/hooks/api/UseSetSearchFilters";
 import { CardSet } from "src/types/CardSet";
 import { CardPack } from "src/types/CardPack";
 import useDebounceInput from "src/hooks/UseDebounceInput";
+import { Mobile } from "./Mobile";
 
 interface CreateTradePageProps {}
 
@@ -23,13 +24,17 @@ export interface Filters {
 }
 
 export const CreateTradePage = ({}: CreateTradePageProps) => {
+  const { device, screenWidth } = useDetectDevice();
   /* Used for Pagination */
   const [cardsPerPage, setCardsPerPage] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
 
   /* Used for filtered search */
   const searchByName = useRef<InputRef | null>(null);
-  const { debouncedInput, setRefresh } = useDebounceInput(searchByName, 200);
+  const { debouncedInput, setRefresh } = useDebounceInput(
+    searchByName,
+    device != "Desktop" ? 450 : 200,
+  );
 
   const [offeredCards, setOfferedCards] = useState<any[]>([]);
   const [wantedcard, setWantedCard] = useState<any>(null);
@@ -67,7 +72,6 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
     setSelectedFilters,
     setCurrentPage,
   );
-  const { device, screenWidth } = useDetectDevice();
 
   // Update filters amount when something changes inside the FilterModal()
   useMemo(() => {
@@ -137,9 +141,37 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           </div>
         ))}
       {device === "Mobile" && screenWidth <= 768 && (
-        <div className="card-searcher m-auto h-auto w-[90%] rounded-full">
-          <div>versione mobile stretta</div>
-        </div>
+        <Mobile
+          cardsAPIResponse={res}
+          loadingResponse={loadingReq}
+          searchByNameInput={searchByName}
+          inputOnChange={setRefresh}
+          cardsPerPage={cardsPerPage}
+          filtersAmount={filtersAmount}
+          setShowModal={setIsOpen}
+          wantedCard={wantedcard}
+          setWantedCard={setWantedCard}
+          offeredCards={offeredCards}
+          setOfferedCards={setOfferedCards}
+          setOverrideRarity={setOverrideRarity}
+        >
+          {!loadingReq && (
+            <Pagination
+              total={res?.meta?.total ?? 20}
+              pageSize={cardsPerPage}
+              current={res?.meta?.currentPage ?? 1}
+              align="center"
+              showSizeChanger
+              showQuickJumper
+              onShowSizeChange={(n, paginationSize) => {
+                setCardsPerPage(paginationSize);
+              }}
+              onChange={(page) => {
+                setCurrentPage(page);
+              }}
+            />
+          )}
+        </Mobile>
       )}
     </>
   );
