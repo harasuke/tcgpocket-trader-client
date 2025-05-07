@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import { positionBasedStyle } from "./SkeletonCard/SkeletonCard.helper";
 
 interface CardProps {
@@ -9,7 +9,7 @@ interface CardProps {
   isBatchView?: boolean;
 }
 
-const Card = ({ index, url, extraClasses, canZoom = true, isBatchView = false}: CardProps) => {
+const Card = memo(function Card({ index, url, extraClasses, canZoom = true, isBatchView = false}: CardProps) {
   const [active, setActive] = useState(false);
 
   return (
@@ -22,6 +22,6 @@ const Card = ({ index, url, extraClasses, canZoom = true, isBatchView = false}: 
       src={url}
     ></img>
   );
-};
+});
 
 export default Card;

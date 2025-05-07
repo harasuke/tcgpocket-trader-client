@@ -47,6 +47,7 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
     set: [],
     pack: [],
   });
+
   // Filters to be applied
   const [filters, setFilters] = useState<Filters>({
     rarity: [],
@@ -58,13 +59,17 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
   const [filtersAmount, setFiltersAmount] = useState(0);
 
   /* Call API to get all visible cards */
-  const { res, loadingReq } = useSetSearchFilters(Endpoints.CARD_LIST(), {
-    ...filters,
-    ...(wantedcard != null ? { rarity: [overrideRarity] } : {}),
-    ...(debouncedInput != null ? { name: debouncedInput } : {}),
-    limit: cardsPerPage.toString(),
-    page: currentPage.toString(),
-  });
+  const { sumOfResponses: res, loadingReq } = useSetSearchFilters(
+    Endpoints.CARD_LIST(),
+    {
+      ...filters,
+      ...(wantedcard != null ? { rarity: [overrideRarity] } : {}),
+      ...(debouncedInput != null ? { name: debouncedInput } : {}),
+      limit: cardsPerPage.toString(),
+      page: currentPage.toString(),
+    },
+    device === "Mobile" ? false : true,
+  );
 
   const { isOpen, setIsOpen, ModalComponent } = useFilterModal(
     setFilters,
@@ -82,6 +87,8 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
     setFiltersAmount(amount);
   }, [selectedFilters]);
 
+
+  // TODO: Remove this use effect, used just for debugging
   useEffect(() => {
     console.log(
       "Vuoi avere la carta id: ",
@@ -110,6 +117,7 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           offeredCards={offeredCards}
           setOfferedCards={setOfferedCards}
           setOverrideRarity={setOverrideRarity}
+          setCurrentPage={setCurrentPage}
         >
           {!loadingReq && (
             <Pagination
@@ -154,24 +162,10 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           offeredCards={offeredCards}
           setOfferedCards={setOfferedCards}
           setOverrideRarity={setOverrideRarity}
-        >
-          {!loadingReq && (
-            <Pagination
-              total={res?.meta?.total ?? 20}
-              pageSize={cardsPerPage}
-              current={res?.meta?.currentPage ?? 1}
-              align="center"
-              showSizeChanger
-              showQuickJumper
-              onShowSizeChange={(n, paginationSize) => {
-                setCardsPerPage(paginationSize);
-              }}
-              onChange={(page) => {
-                setCurrentPage(page);
-              }}
-            />
-          )}
-        </Mobile>
+          loadMoreCards={() => {
+            setCurrentPage((prev) => prev + 1);
+          }}
+        />
       )}
     </>
   );

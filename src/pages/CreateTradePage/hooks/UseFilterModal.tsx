@@ -30,7 +30,7 @@ export default function useFilterModal(
           <button
             key="back"
             onClick={() => setIsOpen(false)}
-            className="cursor-pointer rounded-md bg-red-900 px-3 py-1 text-white"
+            className="cursor-pointer bg-red-900 px-3 py-1 text-white"
           >
             Close
           </button>
