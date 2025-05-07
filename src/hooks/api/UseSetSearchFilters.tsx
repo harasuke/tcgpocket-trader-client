@@ -33,11 +33,12 @@ export default function useSetSearchFilters(
     console.log('executing')
     if (!resetResponse)
       setSumOfResponses(prev => {
-        if (prev == null || prev?.data.length <= 0 || Object.keys(prev?.meta).length <= 0) {
+        if (!prev || !prev?.data || !Array.isArray(prev?.data) || !prev?.meta) {
+        // if (prev == null || prev?.data?.length <= 0 || Object.keys(prev?.meta)?.length <= 0) {
           console.log("early return", prev)
           return res;
         }
-        
+  
         prev.data = [...prev?.data, ...res.data];
         prev.meta = res.meta;
         console.log('nuovo prev', prev)

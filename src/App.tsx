@@ -16,6 +16,7 @@ import SignInPage from "./pages/SignInPage";
 import RegisterPage from "./pages/RegisterPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { CreateTradePage } from "./pages/CreateTradePage/CreateTradePage";
+import { AccessRequiredPage } from "./pages/AccessRequiredPage/AccessRequiredPage";
 
 let router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,12 +29,11 @@ let router = createBrowserRouter(
         <Route path="/register" element={<RegisterPage />} />
       </Route>
       <Route path="/trades" element={<TradesPage />} />
-      <Route element={<ProtectedRoute to="/access-required" condition={"notLoggedIn"} />}>
-        <Route path="/trades/create-trade" element={<CreateTradePage />} />
-        <Route path="/trades/wonder-trade" element={<>placeholder</>} />
-      </Route>
+      <Route path="/trades/create-trade" element={<CreateTradePage />} />
+      <Route path="/trades/wonder-trade" element={<>placeholder</>} />
       <Route path="/offers" element={<OffersPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/access-required" element={<AccessRequiredPage/>} />
     </Route>,
   ),
 );

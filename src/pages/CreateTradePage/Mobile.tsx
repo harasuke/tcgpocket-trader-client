@@ -88,7 +88,7 @@ export const Mobile = ({
           onScrollEnd={() => (!loadingResponse ? loadMoreCards() : null)}
         >
           <div className="cardex-grid grid place-items-center gap-x-2 !gap-y-4 overflow-x-hidden sm:!gap-y-2">
-            {cardsAPIResponse?.data.length <= 0 && loadingResponse
+            {loadingResponse && cardsAPIResponse?.data?.length <= 0
               ? Array.from({ length: cardsPerPage }).map((c: any, index: number) => (
                   <SkeletonCard key={index} />
                 ))
@@ -98,7 +98,7 @@ export const Mobile = ({
                 ))}
 
             {loadingResponse &&
-              cardsAPIResponse?.data.length > 0 &&
+              cardsAPIResponse?.data?.length > 0 &&
               Array.from({ length: cardsAPIResponse?.meta?.limit }).map((n, index) => (
                 <SkeletonCard key={index} />
               ))}

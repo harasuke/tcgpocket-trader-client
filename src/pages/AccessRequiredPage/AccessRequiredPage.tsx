@@ -7,7 +7,7 @@ export const AccessRequiredPage = ({}: AccessRequiredPageProps) => {
   return (
     <>
       Per visualizzare la pagina desiderata e' necessario effettuare un{" "}
-      <NavLink to="/singin" className="text-blue-500 underline">
+      <NavLink to="/signin" className="text-blue-500 underline">
         Login
       </NavLink>{" "}
       o{" "}
