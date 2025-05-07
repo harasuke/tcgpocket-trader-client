@@ -5,7 +5,7 @@ import { FilterIcon } from "src/assets/FilterIcon";
 import SkeletonCard from "src/components/SkeletonCard/SkeletonCard";
 import { StoreContext } from "src/stores/StoreContext";
 import { Meta } from "src/types/api/Meta";
-import { ScrollHandler } from "src/components/Scrollhandler";
+import { ScrollHandler } from "src/components/ScrollHandler";
 import Card from "src/components/Card";
 
 interface MobileProps {
