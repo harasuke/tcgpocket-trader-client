@@ -130,7 +130,7 @@ h6 {
 
 @media (width <= 768px) {
   .cardex-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)) !important;
   }
   .card-searcher {
     padding-top: 0.5rem;
@@ -154,6 +154,27 @@ h6 {
 
 .search-block {
   transition: all .5s ease-in;
+}
+
+.slide-menu {
+  transition: all .35s ease-in-out;
+  height: calc(100vh - 5em);
+  outline: 1px solid #dcdcdc;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  border-radius: 1rem 1rem 0 0;
+}
+
+.slideup {
+  top: 8em;
+  height: calc(100vh - 8em);
+}
+
+.all-cards-scrollable {
+  height: calc(100vh - 12em); /* 8em(navbar) + ~ 3em(searchoptions+padding)*/
+}
+
+body:has(#slideit) {
+  overflow: hidden !important;
 }
 
 /* @media (min-width: 640px) {

@@ -21,9 +21,9 @@ createRoot(document.getElementById("root")!).render(
     <ClerkProvider publishableKey={CLERK_KEY} afterSignOutUrl="/signin">
       <StoreProvider>
         <AnimatePresence mode="wait">
-        {/* <DndProvider backend={isTouchDevice ? TouchBackend : HTML5Backend}> */}
-        <DndProvider backend={HTML5Backend}>
-          <App />
+          {/* <DndProvider backend={isTouchDevice ? TouchBackend : HTML5Backend}> */}
+          <DndProvider backend={HTML5Backend}>
+            <App />
           </DndProvider>
         </AnimatePresence>
       </StoreProvider>

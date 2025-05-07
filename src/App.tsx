@@ -28,7 +28,10 @@ let router = createBrowserRouter(
         <Route path="/register" element={<RegisterPage />} />
       </Route>
       <Route path="/trades" element={<TradesPage />} />
-      <Route path="/trades/create-trade" element={<CreateTradePage />} />
+      <Route element={<ProtectedRoute to="/access-required" condition={"notLoggedIn"} />}>
+        <Route path="/trades/create-trade" element={<CreateTradePage />} />
+        <Route path="/trades/wonder-trade" element={<>placeholder</>} />
+      </Route>
       <Route path="/offers" element={<OffersPage />} />
       <Route path="/profile" element={<ProfilePage />} />
     </Route>,

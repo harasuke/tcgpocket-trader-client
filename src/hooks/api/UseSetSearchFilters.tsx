@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import useGetAPI from "../UseGetAPI";
 import { Meta } from "src/types/api/Meta";
 
@@ -10,10 +10,42 @@ interface resType {
 export default function useSetSearchFilters(
   url: string,
   queryParams: Object,
+  resetResponse: boolean = true
 ): {
-  res: resType;
+  sumOfResponses: resType;
   loadingReq: boolean;
 } {
-  const { res, loadingReq } = useGetAPI(url, queryParams);
-  return { res, loadingReq };
+  const [sumOfResponses, setSumOfResponses] = useState<resType>(
+    {
+      data: [],
+      meta: {
+        total: 0,
+        totalPages: 1,
+        currentPage: 1,
+        limit: 1,
+        orderBy: 'asc'
+      }
+    }
+  );
+  const { res, loadingReq } = useGetAPI(url, queryParams, resetResponse);
+  
+  useMemo(() => {
+    console.log('executing')
+    if (!resetResponse)
+      setSumOfResponses(prev => {
+        if (prev == null || prev?.data.length <= 0 || Object.keys(prev?.meta).length <= 0) {
+          console.log("early return", prev)
+          return res;
+        }
+        
+        prev.data = [...prev?.data, ...res.data];
+        prev.meta = res.meta;
+        console.log('nuovo prev', prev)
+        return prev;
+      })
+    else
+      setSumOfResponses(res)
+  }, [res]);
+
+  return { sumOfResponses, loadingReq };
 }

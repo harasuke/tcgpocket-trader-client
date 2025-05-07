@@ -11,17 +11,18 @@ import Card from "src/components/Card";
 import { IconMdiPokeball } from "src/components/CustomIcons/IconMdiPokeball";
 
 interface DesktopBigProps {
+  children: React.ReactNode;
   filtersAmount: number;
   cardsPerPage: number;
   cardsAPIResponse: { data: { id: string; imageUrl: string }[]; meta: Meta };
   loadingResponse: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  children: React.ReactNode;
   wantedCard: any;
-  setWantedCard: React.Dispatch<React.SetStateAction<any>>;
   offeredCards: any[];
+  setWantedCard: React.Dispatch<React.SetStateAction<any>>;
   setOfferedCards: React.Dispatch<React.SetStateAction<any[]>>;
   setOverrideRarity: React.Dispatch<React.SetStateAction<string | null>>;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
   searchByNameInput: React.RefObject<InputRef | null>;
   inputOnChange: () => void;
 }
@@ -38,6 +39,7 @@ export const DesktopBig = ({
   offeredCards,
   setOfferedCards,
   setOverrideRarity,
+  setCurrentPage,
   searchByNameInput,
   inputOnChange,
 }: DesktopBigProps) => {
@@ -123,7 +125,7 @@ export const DesktopBig = ({
       <div className="card-searcher pb-auto w-full overflow-x-hidden overflow-y-auto px-1 pt-3">
         <div className="sticky top-0 z-10 flex justify-evenly">
           <Badge count={filtersAmount} className="filter-badge" color={storeContext?.navbarColor}>
-            <Button className="my-3 ml-1 ml-3 flex outline-1" onClick={() => setShowModal(true)}>
+            <Button className="!rounded-3xl my-3 ml-1 ml-3 flex outline-1" onClick={() => setShowModal(true)}>
               <FilterIcon />
               Filters
             </Button>
@@ -131,7 +133,7 @@ export const DesktopBig = ({
 
           <Input
             ref={searchByNameInput}
-            className="m-3"
+            className="!rounded-3xl m-3"
             placeholder="Card search... (multiple names must be separated by coma)"
             prefix={<SearchOutlined />}
             onChange={() => {
@@ -161,6 +163,7 @@ export const DesktopBig = ({
                       setOfferedCards((prevItems) => [...prevItems, card]);
 
                     setOverrideRarity(card.rarity);
+                    setCurrentPage(1);
                   }}
                 ></DraggableCard>
               ))}
