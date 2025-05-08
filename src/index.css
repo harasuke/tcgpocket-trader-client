@@ -113,9 +113,6 @@ h6 {
 .hero-font {
   font-family: "FlexoRegular", arial, sans-serif;
 }
-.hero-main-text {
-  margin-left: 3em;
-}
 
 @media (width < 48rem) {
   .hero-carousel {
