@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { Button, Modal } from "antd";
 import { FiltersForm } from "../components/FiltersForm";
 import { Filters } from "../CreateTradePage";
+import { CardRarity } from "src/types/CardRarities";
 
 export default function useFilterModal(
   setFilters: React.Dispatch<React.SetStateAction<Filters>>,
   selectedFilters: Filters,
   setSelectedFilters: React.Dispatch<React.SetStateAction<Filters>>,
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
+  overrideRarity: CardRarity
 ) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -49,7 +51,7 @@ export default function useFilterModal(
         </div>,
       ]}
     >
-      <FiltersForm selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
+      <FiltersForm overrideRarity={overrideRarity} selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
     </Modal>
   );
 

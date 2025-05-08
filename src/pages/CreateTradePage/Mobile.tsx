@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { CloseOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import React, { useContext, useState } from "react";
+import { CloseOutlined, LineOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Badge, Button, Input, InputRef } from "antd";
 import { FilterIcon } from "src/assets/FilterIcon";
 import SkeletonCard from "src/components/SkeletonCard/SkeletonCard";
@@ -8,12 +8,13 @@ import { ScrollHandler } from "src/components/ScrollHandler";
 import Card from "src/components/Card";
 import { EndpointsResponseType } from "src/types/Endpoints";
 import { Card as responseCard } from "src/types/api/Card";
+import { CardListDrawer } from "./components/CardListDrawer";
+import UseCardListDrawerState from "./hooks/UseCardListDrawerState";
 
 interface MobileProps {
   filtersAmount: number;
   cardsPerPage: number;
-  currentPage: number;
-  cardsAPIResponse: EndpointsResponseType["CARD_LIST"];
+  cardsAPIResponse: EndpointsResponseType["CARD_LIST"] | null;
   loadingAPICall: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 
@@ -29,7 +30,6 @@ interface MobileProps {
 export const Mobile = ({
   filtersAmount,
   cardsPerPage,
-  currentPage,
   cardsAPIResponse,
   loadingAPICall,
   setShowModal,
@@ -42,28 +42,20 @@ export const Mobile = ({
 }: MobileProps) => {
   const storeContext = useContext(StoreContext);
   const [cardResponsibility, setCardResponsibility] = useState<"wants" | "offers">("wants");
-  const [currentResponse, setCurrentResponse] = useState<EndpointsResponseType["CARD_LIST"] | null>(
-    null,
-  );
+  const {
+    isOpen: isDrawerOpen,
+    setIsOpen: openDrawer,
+    dragStart,
+    dragEnd,
+    currentDragPosition,
+    setCurrentDragPosition,
+  } = UseCardListDrawerState();
 
-  useEffect(() => {
-    if (
-      !currentResponse ||
-      !currentResponse?.data ||
-      !Array.isArray(currentResponse?.data) ||
-      !currentResponse?.meta ||
-      currentPage == 1
-    )
-      return setCurrentResponse(cardsAPIResponse);
-
-    const data = [...currentResponse?.data, ...cardsAPIResponse.data];
-    const meta = cardsAPIResponse.meta;
-    setCurrentResponse({ data, meta });
-  }, [cardsAPIResponse]);
-
-  const whenFinishedScrolling = useCallback(() => {
+  const whenFinishedScrolling = () => {
+    console.log(">>>>", cardsAPIResponse?.meta?.total, cardsAPIResponse?.data?.length);
+    // if ((cardsAPIResponse?.meta?.total ?? 0) <= (cardsAPIResponse?.data?.length ?? 1)) return;
     loadMoreCards();
-  }, []);
+  };
 
   return (
     <div className="h-auto w-auto overflow-hidden">
@@ -82,7 +74,8 @@ export const Mobile = ({
               className="empty-card-slot flex h-[160px] w-[120px] rounded-md outline-1 outline-gray-300"
               onClick={() => {
                 setCardResponsibility("wants");
-                document.getElementById("slideit")?.classList.add("slideup");
+                // document.getElementById("slideit")?.classList.add("slideup");
+                openDrawer(true);
               }}
             >
               {wantedCard != null ? (
@@ -97,44 +90,71 @@ export const Mobile = ({
             className="empty-card-slot flex h-[160px] w-[120px] rounded-md outline-1 outline-gray-300"
             onClick={() => {
               setCardResponsibility("offers");
-              document.getElementById("slideit")?.classList.add("slideup");
+              // document.getElementById("slideit")?.classList.add("slideup");
+              openDrawer(true);
             }}
           >
             <PlusOutlined className="m-auto" />
           </div>
-
           {offeredCards.length > 0 &&
-              offeredCards.map((c) => <Card url={c.imageUrl} canZoom={false} />)}
+            offeredCards.map((c, index) => <Card key={index} url={c.imageUrl} canZoom={false} />)}
         </div>
       </div>
 
       {/* sezione popup */}
-      <div
+      <CardListDrawer
         id="slideit"
-        className="slide-menu absolute top-[100vh] z-10 h-[100px] w-full overflow-hidden rounded-2xl"
+        className="slide-menu"
+        isOpen={isDrawerOpen}
+        setIsOpen={openDrawer}
+        dragEnd={dragEnd}
+        dragStart={dragStart}
+        currentDragPosition={currentDragPosition}
+        setCurrentDragPosition={setCurrentDragPosition}
       >
-        <div className="relative top-[.75em] mx-[.75em] flex bg-white">
-          <Input
-            ref={searchByNameInput}
-            className="!rounded-3xl"
-            placeholder="Card search... (multiple names must be separated by coma)"
-            prefix={<SearchOutlined />}
-            onChange={() => {
-              inputOnChange();
-              setCurrentResponse(null);
+        <div className="relative top-[.75em] mx-[.75em] flex flex-col flex-wrap">
+          <LineOutlined
+            id="handle"
+            className="mx-auto"
+            onClick={() => {
+              openDrawer(false);
+              // document.getElementById("slideit")?.classList.remove("slideup");
             }}
-            suffix={
-              <button className="cursor-pointer" onClick={() => console.log("hey")}>
-                <CloseOutlined />
-              </button>
-            }
+            onTouchStartCapture={(e) => {
+              dragStart.current = e.touches[0].clientX;
+            }}
+            onTouchEndCapture={(e) => {
+              if (Math.abs((dragStart?.current ?? 0) - e.changedTouches[0].clientY) > 120)
+                openDrawer(false);
+
+              dragStart.current = null;
+              dragEnd.current = null;
+              setCurrentDragPosition(null);
+            }}
+            onTouchMoveCapture={(e) => {
+              setCurrentDragPosition(Math.max(dragStart?.current ?? 0, e.touches[0].clientY));
+            }}
           />
-          <Badge count={filtersAmount} className="filter-badge" color={storeContext?.navbarColor}>
-            <Button className="ml-2 !rounded-3xl outline-1" onClick={() => setShowModal(true)}>
-              <FilterIcon />
-              Filters
-            </Button>
-          </Badge>
+          <div className="flex bg-white">
+            <Input
+              ref={searchByNameInput}
+              className="!rounded-3xl"
+              placeholder="Card search... (multiple names must be separated by coma)"
+              prefix={<SearchOutlined />}
+              onChange={inputOnChange}
+              suffix={
+                <button className="cursor-pointer" onClick={() => console.log("hey")}>
+                  <CloseOutlined />
+                </button>
+              }
+            />
+            <Badge count={filtersAmount} className="filter-badge" color={storeContext?.navbarColor}>
+              <Button className="ml-2 !rounded-3xl outline-1" onClick={() => setShowModal(true)}>
+                <FilterIcon />
+                Filters
+              </Button>
+            </Badge>
+          </div>
         </div>
         <ScrollHandler
           className="all-cards-scrollable relative top-[.75em] m-3 overflow-scroll"
@@ -142,7 +162,7 @@ export const Mobile = ({
         >
           <div className="cardex-grid relative grid place-items-center gap-x-2 !gap-y-4 overflow-x-hidden sm:!gap-y-2">
             <>
-              {currentResponse?.data?.map((c, index: number) => (
+              {cardsAPIResponse?.data?.map((c, index: number) => (
                 <div
                   key={index}
                   className="relative m-auto flex w-auto items-stretch rounded-md"
@@ -151,9 +171,12 @@ export const Mobile = ({
                     ...(offeredCards.find((_c) => _c?.id === c.id) && { border: "2px solid red" }),
                   }}
                   onClick={() => {
-                    if (!offeredCards.length && !wantedCard)
-                      setCurrentResponse(null);
-                    onCardSelection(cardResponsibility, c);
+                    if (!loadingAPICall) onCardSelection(cardResponsibility, c);
+                    if (cardResponsibility === "wants" && wantedCard == null) {
+                      // First time clicking a wanted card. Card selection drawer should be closed.
+                      // document.getElementById("slideit")?.classList.remove("slideup");
+                      openDrawer(false);
+                    }
                   }}
                 >
                   {wantedCard?.id === c?.id && (
@@ -176,7 +199,7 @@ export const Mobile = ({
               ))}
 
               {loadingAPICall &&
-                Array.from({ length: currentResponse?.meta?.limit ?? cardsPerPage }).map(
+                Array.from({ length: cardsAPIResponse?.meta?.limit ?? cardsPerPage }).map(
                   (_, index) => (
                     <SkeletonCard
                       extraClasses="!h-auto !aspect-[2/3] !max-h-full !w-full !rounded-md"
@@ -187,7 +210,7 @@ export const Mobile = ({
             </>
           </div>
         </ScrollHandler>
-      </div>
+      </CardListDrawer>
     </div>
   );
 };

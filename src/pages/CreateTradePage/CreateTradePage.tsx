@@ -12,6 +12,7 @@ import { CardPack } from "src/types/CardPack";
 import useDebounceInput from "src/hooks/UseDebounceInput";
 import { Mobile } from "./Mobile";
 import { Card } from "src/types/api/Card";
+import { EndpointsResponseType } from "src/types/Endpoints";
 
 interface CreateTradePageProps {}
 
@@ -33,11 +34,14 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
   const searchByName = useRef<InputRef | null>(null);
   const { debouncedInput, setRefresh } = useDebounceInput(
     searchByName,
-    device != "Desktop" ? 450 : 200,
+    device != "Desktop" ? 350 : 200,
   );
 
   const [offeredCards, setOfferedCards] = useState<Card[]>([]);
   const [wantedCard, setWantedCard] = useState<Card | null>(null);
+  const [currentResponse, setCurrentResponse] = useState<EndpointsResponseType["CARD_LIST"] | null>(
+    null,
+  );
 
   // Filters to be stored but not to apply
   const [selectedFilters, setSelectedFilters] = useState<Filters>({
@@ -68,11 +72,27 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
     page: currentPage.toString(),
   });
 
+  useEffect(() => {
+    if (device !== "Mobile" && device !== "Tablet") return;
+    if (
+      !currentResponse ||
+      !currentResponse?.data ||
+      !Array.isArray(currentResponse?.data) ||
+      !currentResponse?.meta
+    )
+      return setCurrentResponse(res);
+
+    const data = [...currentResponse?.data, ...res.data];
+    const meta = res.meta;
+    setCurrentResponse({ data, meta });
+  }, [res]);
+
   const { isOpen, setIsOpen, ModalComponent } = useFilterModal(
     setFilters,
     selectedFilters,
     setSelectedFilters,
     setCurrentPage,
+    wantedCard?.rarity ?? offeredCards[0]?.rarity ?? undefined,
   );
 
   // Update filters amount when something changes inside the FilterModal()
@@ -89,31 +109,74 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
     setCurrentPage(1);
   }, [device]);
 
+  useEffect(() => {
+    setCurrentResponse(null);
+    setCurrentPage(1);
+  }, [debouncedInput]);
+
+  const resetCardLogic = (type: any, card: any) => {
+    if (device === "Mobile" || device === "Tablet") {
+      /**
+       * When this function gets called, offeredCards and wantedCard have the value of the previous state.
+       * CurrentResponse has to be resetted only if after the current card click, there will be no other cards selected or there will be only 1 card select.
+       * This must be done because the first card selected determines a card filter based by rarity.
+       * Trades can only be made between cards by the same rarity.
+       *
+       * If by clicking the card is not the only card or it's not the last, I have to always keep the current api call result and always append new cards in case of a user scrolls to the bottom.
+       */
+      if (
+        type == "offers" &&
+        wantedCard == null &&
+        (!offeredCards.length || (offeredCards.length == 1 && offeredCards[0].id == card.id))
+      ) {
+        setCurrentResponse(null);
+      } else if (
+        type == "wants" &&
+        offeredCards.length <= 0 &&
+        (wantedCard == null || wantedCard.id == card.id)
+      ) {
+        setCurrentResponse(null);
+      }
+      setCurrentPage(1);
+    }
+  };
+
   const onCardSelection = (type: "wants" | "offers", card: Card) => {
-    console.log("eccoci qui", type, card);
+    resetCardLogic(type, card);
+
     switch (type) {
       case "wants": {
-        if (wantedCard == null) return setWantedCard(card);
+        if (wantedCard == null) {
+          setWantedCard(card);
+          break;
+        }
 
-        if (wantedCard.id === card.id) return setWantedCard(null);
+        if (wantedCard.id === card.id) {
+          setWantedCard(null);
+          break;
+        }
 
         break;
       }
 
       case "offers": {
+        if (wantedCard != null && card.id == wantedCard.id) break;
+
         const alreadyExists = offeredCards.findIndex((_c) => _c.id == card.id);
         if (alreadyExists !== -1)
           setOfferedCards((currentOffered) => {
-            currentOffered.splice(alreadyExists, 1);
-            return [...currentOffered];
+            const newList = [...currentOffered.filter((_c) => _c.id !== card.id)];
+            return newList;
           });
         else
           setOfferedCards((currentOffered) => {
             if (currentOffered.length < 5) {
-              if (currentOffered.length != currentOffered.filter(o => o.rarity === card.rarity).length)
-                return [...currentOffered]
-              else
-                return (currentOffered = [...currentOffered, card]);
+              if (
+                currentOffered.length !=
+                currentOffered.filter((o) => o.rarity === card.rarity).length
+              )
+                return [...currentOffered];
+              else return (currentOffered = [...currentOffered, card]);
             }
             return [...currentOffered];
           });
@@ -121,8 +184,6 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
         break;
       }
     }
-    if (device === "Mobile" || device === "Tablet")
-      setCurrentPage(1);
   };
 
   return (
@@ -135,7 +196,6 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           searchByNameInput={searchByName}
           inputOnChange={() => {
             setRefresh();
-            setCurrentPage(1);
           }}
           cardsPerPage={cardsPerPage}
           filtersAmount={filtersAmount}
@@ -175,15 +235,11 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
         ))}
       {device === "Mobile" && screenWidth <= 768 && (
         <Mobile
-          cardsAPIResponse={res}
+          cardsAPIResponse={currentResponse}
           loadingAPICall={loadingReq}
           searchByNameInput={searchByName}
-          inputOnChange={() => {
-            setRefresh();
-            setCurrentPage(1);
-          }}
+          inputOnChange={() => setRefresh()}
           cardsPerPage={cardsPerPage}
-          currentPage={currentPage}
           filtersAmount={filtersAmount}
           setShowModal={setIsOpen}
           wantedCard={wantedCard}

@@ -12,34 +12,40 @@ export const ScrollHandler = memo(function ScrollHandler({
   onScrollEnd,
 }: ScrollHandlerProps) {
   const thisRef = useRef<HTMLDivElement | null>(null);
-  const debounce = useRef<number | null>(null);
+  const debounce = useRef(false);
 
-  const handleScroll = (e: Event) => {
-    if (debounce.current != null) return;
-    const target = e.target as HTMLElement;
+  const handleScroll = () => {
+    if (!thisRef.current || debounce.current) return;
 
-    if (target.scrollTop + target.clientHeight >= target.scrollHeight) {
-      debounce.current = setTimeout(() => {
-        console.log("ho finito di scrollare");
-        if (onScrollEnd != undefined) onScrollEnd();
+    debounce.current = true;
 
-        debounce.current = null;
-      }, 300);
-    }
+    requestAnimationFrame(() => {
+      const el = thisRef.current!;
+      const threshold = 130;
+
+      const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - threshold;
+
+      if (atBottom && onScrollEnd) {
+        onScrollEnd();
+      }
+
+      debounce.current = false;
+    });
   };
 
   useEffect(() => {
-    thisRef?.current?.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
+    const el = thisRef.current;
+    if (!el) return;
+
+    el.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
-      thisRef?.current?.removeEventListener("scroll", handleScroll);
+      el.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   return (
-    <div ref={thisRef} className={className + ""}>
+    <div ref={thisRef} className={className}>
       {children}
     </div>
   );

@@ -4,13 +4,19 @@ import { Filters } from "../CreateTradePage";
 import { Endpoints } from "src/types/Endpoints";
 import useSearchFiltersOptions from "../hooks/UseSearchFiltersOptions";
 import useDetectDevice from "src/hooks/UseDetectDevice";
+import { CardRarity } from "src/types/CardRarities";
 
 interface FiltersFormProps {
   selectedFilters: Filters;
   setSelectedFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  overrideRarity: CardRarity;
 }
 
-export const FiltersForm = ({ selectedFilters, setSelectedFilters }: FiltersFormProps) => {
+export const FiltersForm = ({
+  selectedFilters,
+  setSelectedFilters,
+  overrideRarity,
+}: FiltersFormProps) => {
   const { screenWidth } = useDetectDevice();
 
   const { cardElementOptions, cardRarityOptions, expansionOtions, packOptions, typeOptions } =
@@ -20,6 +26,7 @@ export const FiltersForm = ({ selectedFilters, setSelectedFilters }: FiltersForm
     <Form className="flex flex-col gap-3">
       {/* Rarity */}
       <Select
+        disabled={overrideRarity != undefined ? true : false}
         className="custom-select"
         allowClear
         mode="multiple"
