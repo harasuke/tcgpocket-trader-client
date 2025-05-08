@@ -9,6 +9,7 @@ import { Meta } from "src/types/api/Meta";
 import { DraggableCard } from "./components/DraggableCard";
 import Card from "src/components/Card";
 import { IconMdiPokeball } from "src/components/CustomIcons/IconMdiPokeball";
+import { Card as responseCard } from "src/types/api/Card";
 
 interface DesktopBigProps {
   children: React.ReactNode;
@@ -19,12 +20,9 @@ interface DesktopBigProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   wantedCard: any;
   offeredCards: any[];
-  setWantedCard: React.Dispatch<React.SetStateAction<any>>;
-  setOfferedCards: React.Dispatch<React.SetStateAction<any[]>>;
-  setOverrideRarity: React.Dispatch<React.SetStateAction<string | null>>;
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
   searchByNameInput: React.RefObject<InputRef | null>;
   inputOnChange: () => void;
+  onCardSelection: any
 }
 
 export const DesktopBig = ({
@@ -35,13 +33,10 @@ export const DesktopBig = ({
   setShowModal,
   filtersAmount,
   wantedCard,
-  setWantedCard,
   offeredCards,
-  setOfferedCards,
-  setOverrideRarity,
-  setCurrentPage,
   searchByNameInput,
   inputOnChange,
+  onCardSelection
 }: DesktopBigProps) => {
   const storeContext = useContext(StoreContext);
 
@@ -72,13 +67,15 @@ export const DesktopBig = ({
           ref={dropWants as unknown as React.Ref<HTMLDivElement>}
         >
           <div className="col-start-1 row-start-1">
-            <IconMdiPokeball style={{
-              width: '10em',
-              height: 'auto',
-              color: '#999999',
-              transform: 'rotateZ(36deg)',
-              zIndex: 0
-            }}/>
+            <IconMdiPokeball
+              style={{
+                width: "10em",
+                height: "auto",
+                color: "#999999",
+                transform: "rotateZ(36deg)",
+                zIndex: 0,
+              }}
+            />
           </div>
           {/* <div className="col-start-1 row-start-1 flex flex-col">
             <InboxOutlined className="m-auto text-5xl text-white" />
@@ -98,17 +95,19 @@ export const DesktopBig = ({
           )}
         </div>
         <div
-          className="trade-builder outline-grey-500 m-2 grid h-[50vh] grid-cols-1 grid-rows-1 place-items-center rounded-xl bg-gray-800 outline-[6px] outline-red-800  overflow-hidden "
+          className="trade-builder outline-grey-500 m-2 grid h-[50vh] grid-cols-1 grid-rows-1 place-items-center overflow-hidden rounded-xl bg-gray-800 outline-[6px] outline-red-800"
           ref={dropOffers as unknown as React.Ref<HTMLDivElement>}
         >
           <div className="col-start-1 row-start-1">
-            <IconMdiPokeball style={{
-              width: '10em',
-              height: 'auto',
-              color: '#999999',
-              transform: 'rotateZ(36deg)',
-              zIndex: 0
-            }}/>
+            <IconMdiPokeball
+              style={{
+                width: "10em",
+                height: "auto",
+                color: "#999999",
+                transform: "rotateZ(36deg)",
+                zIndex: 0,
+              }}
+            />
           </div>
           {offeredCards != undefined &&
             offeredCards?.map((card, index) => (
@@ -125,7 +124,10 @@ export const DesktopBig = ({
       <div className="card-searcher pb-auto w-full overflow-x-hidden overflow-y-auto px-1 pt-3">
         <div className="sticky top-0 z-10 flex justify-evenly">
           <Badge count={filtersAmount} className="filter-badge" color={storeContext?.navbarColor}>
-            <Button className="!rounded-3xl my-3 ml-1 ml-3 flex outline-1" onClick={() => setShowModal(true)}>
+            <Button
+              className="my-3 ml-1 ml-3 flex !rounded-3xl outline-1"
+              onClick={() => setShowModal(true)}
+            >
               <FilterIcon />
               Filters
             </Button>
@@ -133,7 +135,7 @@ export const DesktopBig = ({
 
           <Input
             ref={searchByNameInput}
-            className="!rounded-3xl m-3"
+            className="m-3 !rounded-3xl"
             placeholder="Card search... (multiple names must be separated by coma)"
             prefix={<SearchOutlined />}
             onChange={() => {
@@ -158,12 +160,13 @@ export const DesktopBig = ({
                   card={c}
                   whenDropped={(droppedLocationName, card) => {
                     console.log("choosen card is ", card.id);
-                    if (droppedLocationName === "wants") setWantedCard(card);
-                    if (droppedLocationName === "offers")
-                      setOfferedCards((prevItems) => [...prevItems, card]);
+                    onCardSelection(droppedLocationName, card);
+                    // if (droppedLocationName === "wants") setWantedCard(card);
+                    // if (droppedLocationName === "offers")
+                      // setOfferedCards((prevItems) => [...prevItems, card]);
 
-                    setOverrideRarity(card.rarity);
-                    setCurrentPage(1);
+                    // setOverrideRarity(card.rarity);
+                    // setCurrentPage(1);
                   }}
                 ></DraggableCard>
               ))}

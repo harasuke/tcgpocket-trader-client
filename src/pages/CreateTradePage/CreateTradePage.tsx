@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { InputRef, Pagination } from "antd";
 import useDetectDevice from "src/hooks/UseDetectDevice";
-import { Endpoints } from "src/types/Endpoints";
 import { DesktopBig } from "./DesktopBig";
 import useFilterModal from "./hooks/UseFilterModal";
 import { CardRarity } from "src/types/CardRarities";
@@ -12,6 +11,7 @@ import { CardSet } from "src/types/CardSet";
 import { CardPack } from "src/types/CardPack";
 import useDebounceInput from "src/hooks/UseDebounceInput";
 import { Mobile } from "./Mobile";
+import { Card } from "src/types/api/Card";
 
 interface CreateTradePageProps {}
 
@@ -36,9 +36,9 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
     device != "Desktop" ? 450 : 200,
   );
 
-  const [offeredCards, setOfferedCards] = useState<any[]>([]);
-  const [wantedcard, setWantedCard] = useState<any>(null);
-  const [overrideRarity, setOverrideRarity] = useState<string | null>(null);
+  const [offeredCards, setOfferedCards] = useState<Card[]>([]);
+  const [wantedCard, setWantedCard] = useState<Card | null>(null);
+
   // Filters to be stored but not to apply
   const [selectedFilters, setSelectedFilters] = useState<Filters>({
     rarity: [],
@@ -59,17 +59,14 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
   const [filtersAmount, setFiltersAmount] = useState(0);
 
   /* Call API to get all visible cards */
-  const { sumOfResponses: res, loadingReq } = useSetSearchFilters(
-    Endpoints.CARD_LIST(),
-    {
-      ...filters,
-      ...(wantedcard != null ? { rarity: [overrideRarity] } : {}),
-      ...(debouncedInput != null ? { name: debouncedInput } : {}),
-      limit: cardsPerPage.toString(),
-      page: currentPage.toString(),
-    },
-    device === "Mobile" ? false : true,
-  );
+  const { res, loadingReq } = useSetSearchFilters({
+    ...filters,
+    ...(wantedCard != null ? { rarity: [wantedCard.rarity] } : {}),
+    ...(offeredCards.length ? { rarity: [offeredCards[0]?.rarity] } : {}),
+    ...(debouncedInput != null ? { name: debouncedInput } : {}),
+    limit: cardsPerPage.toString(),
+    page: currentPage.toString(),
+  });
 
   const { isOpen, setIsOpen, ModalComponent } = useFilterModal(
     setFilters,
@@ -85,20 +82,44 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
       if (val.length) amount++;
     });
     setFiltersAmount(amount);
+    setCurrentPage(1);
   }, [selectedFilters]);
 
-
-  // TODO: Remove this use effect, used just for debugging
   useEffect(() => {
-    console.log(
-      "Vuoi avere la carta id: ",
-      wantedcard,
-      "di rarita ",
-      overrideRarity,
-      "\nsei disposto a dare la carte",
-      offeredCards,
-    );
-  }, [wantedcard, offeredCards]);
+    setCurrentPage(1);
+  }, [device]);
+
+  const onCardSelection = (type: "wants" | "offers", card: Card) => {
+    console.log("eccoci qui", type, card);
+    switch (type) {
+      case "wants": {
+        if (wantedCard == null) return setWantedCard(card);
+
+        if (wantedCard.id === card.id) return setWantedCard(null);
+
+        break;
+      }
+
+      case "offers": {
+        console.log("adfasdf");
+        const alreadyExists = offeredCards.findIndex((_c) => _c.id == card.id);
+        if (alreadyExists !== -1)
+          setOfferedCards((currentOffered) => {
+            currentOffered.splice(alreadyExists, 1);
+            return [...currentOffered];
+          });
+        else
+          setOfferedCards((currentOffered) => {
+            if (currentOffered.length < 5) return (currentOffered = [...currentOffered, card]);
+
+            return [...currentOffered];
+          });
+
+        break;
+      }
+    }
+    // setCurrentPage(1);
+  };
 
   return (
     <>
@@ -108,16 +129,16 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           cardsAPIResponse={res}
           loadingResponse={loadingReq}
           searchByNameInput={searchByName}
-          inputOnChange={setRefresh}
+          inputOnChange={() => {
+            setRefresh();
+            setCurrentPage(1);
+          }}
           cardsPerPage={cardsPerPage}
           filtersAmount={filtersAmount}
           setShowModal={setIsOpen}
-          wantedCard={wantedcard}
-          setWantedCard={setWantedCard}
+          wantedCard={wantedCard}
           offeredCards={offeredCards}
-          setOfferedCards={setOfferedCards}
-          setOverrideRarity={setOverrideRarity}
-          setCurrentPage={setCurrentPage}
+          onCardSelection={onCardSelection}
         >
           {!loadingReq && (
             <Pagination
@@ -151,17 +172,19 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
       {device === "Mobile" && screenWidth <= 768 && (
         <Mobile
           cardsAPIResponse={res}
-          loadingResponse={loadingReq}
+          loadingAPICall={loadingReq}
           searchByNameInput={searchByName}
-          inputOnChange={setRefresh}
+          inputOnChange={() => {
+            setRefresh();
+            setCurrentPage(1);
+          }}
           cardsPerPage={cardsPerPage}
+          currentPage={currentPage}
           filtersAmount={filtersAmount}
           setShowModal={setIsOpen}
-          wantedCard={wantedcard}
-          setWantedCard={setWantedCard}
+          wantedCard={wantedCard}
           offeredCards={offeredCards}
-          setOfferedCards={setOfferedCards}
-          setOverrideRarity={setOverrideRarity}
+          onCardSelection={onCardSelection}
           loadMoreCards={() => {
             setCurrentPage((prev) => prev + 1);
           }}

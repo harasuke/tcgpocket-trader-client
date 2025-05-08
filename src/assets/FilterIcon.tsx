@@ -7,7 +7,7 @@ export const FilterIcon = ({}: FilterIconProps) => {
     <svg
       stroke="currentColor"
       fill="currentColor"
-      stroke-width="0"
+      strokeWidth="0"
       viewBox="0 0 512 512"
       className="h-4 w-4 min-w-3 text-lg"
       aria-hidden="true"

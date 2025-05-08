@@ -1,52 +1,21 @@
 import React, { useEffect, useMemo, useState } from "react";
 import useGetAPI from "../UseGetAPI";
 import { Meta } from "src/types/api/Meta";
+import { Endpoints, EndpointsResponseType } from "src/types/Endpoints";
 
-interface resType {
+export interface cards_searchFilters_useGetAPI {
   data: { id: string; imageUrl: string }[];
   meta: Meta;
 }
 
 export default function useSetSearchFilters(
-  url: string,
   queryParams: Object,
-  resetResponse: boolean = true
+  resetResponse: boolean = true,
 ): {
-  sumOfResponses: resType;
+  res: EndpointsResponseType["CARD_LIST"];
   loadingReq: boolean;
 } {
-  const [sumOfResponses, setSumOfResponses] = useState<resType>(
-    {
-      data: [],
-      meta: {
-        total: 0,
-        totalPages: 1,
-        currentPage: 1,
-        limit: 1,
-        orderBy: 'asc'
-      }
-    }
-  );
-  const { res, loadingReq } = useGetAPI(url, queryParams, resetResponse);
-  
-  useMemo(() => {
-    console.log('executing')
-    if (!resetResponse)
-      setSumOfResponses(prev => {
-        if (!prev || !prev?.data || !Array.isArray(prev?.data) || !prev?.meta) {
-        // if (prev == null || prev?.data?.length <= 0 || Object.keys(prev?.meta)?.length <= 0) {
-          console.log("early return", prev)
-          return res;
-        }
-  
-        prev.data = [...prev?.data, ...res.data];
-        prev.meta = res.meta;
-        console.log('nuovo prev', prev)
-        return prev;
-      })
-    else
-      setSumOfResponses(res)
-  }, [res]);
+  const { res, loadingReq } = useGetAPI(Endpoints.CARD_LIST(), queryParams, resetResponse);
 
-  return { sumOfResponses, loadingReq };
+  return { res, loadingReq };
 }

@@ -1,4 +1,6 @@
+import { Card } from "./api/Card";
 import { CardRarityType } from "./CardRarities";
+import { Meta } from "src/types/api/Meta";
 
 export const Endpoints = {
 
@@ -20,3 +22,10 @@ export const Endpoints = {
   TRADE: (id: string) =>
     `/api/trade/${id}`,
 } as const;
+
+export type EndpointsResponseType = {
+  CARD_LIST: {
+    data: Card[];
+    meta: Meta;
+  };
+}
