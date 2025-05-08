@@ -151,6 +151,8 @@ export const Mobile = ({
                     ...(offeredCards.find((_c) => _c?.id === c.id) && { border: "2px solid red" }),
                   }}
                   onClick={() => {
+                    if (!offeredCards.length && !wantedCard)
+                      setCurrentResponse(null);
                     onCardSelection(cardResponsibility, c);
                   }}
                 >

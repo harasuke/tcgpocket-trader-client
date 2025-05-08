@@ -101,7 +101,6 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
       }
 
       case "offers": {
-        console.log("adfasdf");
         const alreadyExists = offeredCards.findIndex((_c) => _c.id == card.id);
         if (alreadyExists !== -1)
           setOfferedCards((currentOffered) => {
@@ -110,15 +109,20 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           });
         else
           setOfferedCards((currentOffered) => {
-            if (currentOffered.length < 5) return (currentOffered = [...currentOffered, card]);
-
+            if (currentOffered.length < 5) {
+              if (currentOffered.length != currentOffered.filter(o => o.rarity === card.rarity).length)
+                return [...currentOffered]
+              else
+                return (currentOffered = [...currentOffered, card]);
+            }
             return [...currentOffered];
           });
 
         break;
       }
     }
-    // setCurrentPage(1);
+    if (device === "Mobile" || device === "Tablet")
+      setCurrentPage(1);
   };
 
   return (
