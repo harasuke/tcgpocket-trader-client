@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { CloseOutlined, LineOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Badge, Button, Input, InputRef } from "antd";
 import { FilterIcon } from "src/assets/FilterIcon";
@@ -8,7 +8,6 @@ import { ScrollHandler } from "src/components/ScrollHandler";
 import Card from "src/components/Card";
 import { EndpointsResponseType } from "src/types/Endpoints";
 import { Card as responseCard } from "src/types/api/Card";
-import { CardListDrawer } from "./components/CardListDrawer";
 import UseCardListDrawerState from "./hooks/UseCardListDrawerState";
 
 interface MobileProps {
@@ -42,39 +41,32 @@ export const Mobile = ({
 }: MobileProps) => {
   const storeContext = useContext(StoreContext);
   const [cardResponsibility, setCardResponsibility] = useState<"wants" | "offers">("wants");
+
+  const sliderRef = useRef<HTMLDivElement>(null);
   const {
     isOpen: isDrawerOpen,
     setIsOpen: openDrawer,
-    dragStart,
-    dragEnd,
-    currentDragPosition,
-    setCurrentDragPosition,
-  } = UseCardListDrawerState();
+    onTouchEndCapture,
+    onTouchMoveCapture,
+    onTouchStartCapture,
+  } = UseCardListDrawerState(sliderRef);
 
   const whenFinishedScrolling = () => {
     console.log(">>>>", cardsAPIResponse?.meta?.total, cardsAPIResponse?.data?.length);
-    // if ((cardsAPIResponse?.meta?.total ?? 0) <= (cardsAPIResponse?.data?.length ?? 1)) return;
+    // TODO: Should not call if there are no more items in the list
     loadMoreCards();
   };
 
   return (
     <div className="h-auto w-auto overflow-hidden">
       <div className="h-[100vh] w-full p-3 outline-1">
-        <Button
-          onClick={() => {
-            document.getElementById("slideit")?.classList.remove("slideup");
-          }}
-        >
-          close
-        </Button>
-        <div>
+        <div className="align-items-center flex flex-col">
           <div className="flex flex-col rounded-md bg-gray-400 p-3">
             <span className="text-center">Wants</span>
             <div
-              className="empty-card-slot flex h-[160px] w-[120px] rounded-md outline-1 outline-gray-300"
+              className="empty-card-slot flex h-[120px] w-[80px] rounded-md outline-1 outline-gray-300"
               onClick={() => {
                 setCardResponsibility("wants");
-                // document.getElementById("slideit")?.classList.add("slideup");
                 openDrawer(true);
               }}
             >
@@ -85,55 +77,60 @@ export const Mobile = ({
               )}
             </div>
           </div>
-          offers
-          <div
-            className="empty-card-slot flex h-[160px] w-[120px] rounded-md outline-1 outline-gray-300"
+
+
+
+
+
+          <Button
+            className="hero-font m-3 mx-auto !rounded-3xl outline-1"
             onClick={() => {
-              setCardResponsibility("offers");
-              // document.getElementById("slideit")?.classList.add("slideup");
-              openDrawer(true);
+              console.log("");
             }}
           >
-            <PlusOutlined className="m-auto" />
+            Confirm Trade
+          </Button>
+
+
+
+
+          <div className="grid grid-cols-4 gap-2">
+            <div
+              className="empty-card-slot flex h-[130px] aspect-[2/3] w-auto rounded-md outline-1 outline-gray-300"
+              onClick={() => {
+                setCardResponsibility("offers");
+                openDrawer(true);
+              }}
+            >
+              <PlusOutlined className="m-auto" />
+            </div>
+            {offeredCards.length > 0 &&
+              offeredCards.map((c, index) => (
+                <Card extraClasses="" key={index} url={c.imageUrl} canZoom={false} />
+              ))}
           </div>
-          {offeredCards.length > 0 &&
-            offeredCards.map((c, index) => <Card key={index} url={c.imageUrl} canZoom={false} />)}
         </div>
       </div>
 
       {/* sezione popup */}
-      <CardListDrawer
+      <div
+        className="slide-menu absolute z-10 h-[100px] w-full overflow-hidden rounded-2xl"
         id="slideit"
-        className="slide-menu"
-        isOpen={isDrawerOpen}
-        setIsOpen={openDrawer}
-        dragEnd={dragEnd}
-        dragStart={dragStart}
-        currentDragPosition={currentDragPosition}
-        setCurrentDragPosition={setCurrentDragPosition}
+        ref={sliderRef}
+        style={{
+          top: isDrawerOpen ? "8em" : "100vh",
+        }}
       >
         <div className="relative top-[.75em] mx-[.75em] flex flex-col flex-wrap">
           <LineOutlined
             id="handle"
-            className="mx-auto"
+            className="mx-auto mb-1 h-[2ch] outline-1"
             onClick={() => {
               openDrawer(false);
-              // document.getElementById("slideit")?.classList.remove("slideup");
             }}
-            onTouchStartCapture={(e) => {
-              dragStart.current = e.touches[0].clientX;
-            }}
-            onTouchEndCapture={(e) => {
-              if (Math.abs((dragStart?.current ?? 0) - e.changedTouches[0].clientY) > 120)
-                openDrawer(false);
-
-              dragStart.current = null;
-              dragEnd.current = null;
-              setCurrentDragPosition(null);
-            }}
-            onTouchMoveCapture={(e) => {
-              setCurrentDragPosition(Math.max(dragStart?.current ?? 0, e.touches[0].clientY));
-            }}
+            onTouchStartCapture={onTouchStartCapture}
+            onTouchEndCapture={onTouchEndCapture}
+            onTouchMoveCapture={onTouchMoveCapture}
           />
           <div className="flex bg-white">
             <Input
@@ -210,7 +207,7 @@ export const Mobile = ({
             </>
           </div>
         </ScrollHandler>
-      </CardListDrawer>
+      </div>
     </div>
   );
 };

@@ -27,19 +27,19 @@ const Navbar = () => {
       <div className="flex flex-row items-center">
         <NavLink
           to="/"
-          className={({ isActive }) => (isActive ? "navbar-btn bg-gray-950" : "navbar-btn")}
+          className={({ isActive }) => (isActive ? "hero-font navbar-btn bg-gray-950" : "hero-font navbar-btn")}
         >
           Home
         </NavLink>
         <NavLink
           to="/trades"
-          className={({ isActive }) => (isActive ? "navbar-btn bg-gray-950" : "navbar-btn")}
+          className={({ isActive }) => (isActive ? "hero-font navbar-btn bg-gray-950" : "hero-font navbar-btn")}
         >
           Trades
         </NavLink>
         <NavLink
           to="/offers"
-          className={({ isActive }) => (isActive ? "navbar-btn bg-gray-950" : "navbar-btn")}
+          className={({ isActive }) => (isActive ? "hero-font navbar-btn bg-gray-950" : "hero-font navbar-btn")}
         >
           Offers
         </NavLink>

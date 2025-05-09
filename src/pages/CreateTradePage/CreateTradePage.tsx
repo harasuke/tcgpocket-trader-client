@@ -72,6 +72,14 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
     page: currentPage.toString(),
   });
 
+  const { isOpen, setIsOpen, ModalComponent } = useFilterModal(
+    setFilters,
+    selectedFilters,
+    setSelectedFilters,
+    setCurrentPage,
+    wantedCard?.rarity ?? offeredCards[0]?.rarity ?? undefined,
+  );
+
   useEffect(() => {
     if (device !== "Mobile" && device !== "Tablet") return;
     if (
@@ -87,13 +95,15 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
     setCurrentResponse({ data, meta });
   }, [res]);
 
-  const { isOpen, setIsOpen, ModalComponent } = useFilterModal(
-    setFilters,
-    selectedFilters,
-    setSelectedFilters,
-    setCurrentPage,
-    wantedCard?.rarity ?? offeredCards[0]?.rarity ?? undefined,
-  );
+  useEffect(() => {
+    // if (device !== "Mobile" && device !== "Tablet") return;
+    setCurrentResponse(null);
+  }, [filters.rarity]);
+
+  useEffect(() => {
+    setCurrentResponse(null);
+    setCurrentPage(1);
+  }, [filters]);
 
   // Update filters amount when something changes inside the FilterModal()
   useMemo(() => {
@@ -106,6 +116,7 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
   }, [selectedFilters]);
 
   useEffect(() => {
+    setCurrentResponse(null);
     setCurrentPage(1);
   }, [device]);
 
@@ -187,7 +198,12 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
   };
 
   return (
-    <>
+    <div
+      style={{
+        backgroundImage: `url("/bg-light.png")`,
+        backdropFilter: `opacity(.5)`
+      }}
+    >
       {ModalComponent}
       {device === "Desktop" && screenWidth >= 768 && (
         <DesktopBig
@@ -250,6 +266,6 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           }}
         />
       )}
-    </>
+    </div>
   );
 };
