@@ -291,6 +291,7 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
                 setBlockSubmitTrade(true);
                 messageApi.open({
                   type: "success",
+                  duration: 1.5,
                   content: (
                     <>
                       Trade created !<br />

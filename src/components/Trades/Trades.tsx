@@ -36,7 +36,7 @@ const Trades = ({ amountToLoad = 15 }: TradesProps) => {
         <>
           <h1 className="hero-font text-center text-3xl">Recent Trades</h1>
           {
-            <Slider {...settings} className="m-2 rounded-xl bg-blue-200">
+            <Slider {...settings} className="m-2 rounded-xl bg-blue-200 trade-slider">
               {loadingReq
                 ? Array.from({ length: amountToLoad }).map((_, index) => (
                     <SkeletonTrade key={index} />
@@ -57,7 +57,7 @@ const Trades = ({ amountToLoad = 15 }: TradesProps) => {
       ) : (
         <>
           <h1 className="hero-font text-center text-3xl">Recent Trades</h1>
-          <Slider {...settings} className="m-2 rounded-xl bg-blue-200">
+          <Slider {...settings} className="m-2 rounded-xl bg-blue-200 trade-slider">
             {loadingReq
               ? Array.from({ length: amountToLoad }).map((_, index) => (
                   <SkeletonTrade key={index} />

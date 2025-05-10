@@ -9,6 +9,7 @@ import Card from "src/components/Card";
 import { EndpointsResponseType } from "src/types/Endpoints";
 import { Card as responseCard } from "src/types/api/Card";
 import UseCardListDrawerState from "./hooks/UseCardListDrawerState";
+import { GiCardDiscard, GiCardPick } from "react-icons/gi";
 
 interface MobileProps {
   filtersAmount: number;
@@ -25,7 +26,7 @@ interface MobileProps {
   loadMoreCards: () => void;
   onCardSelection: (type: "wants" | "offers", card: responseCard) => void;
   onConfirmTrade: () => void;
-  blockSubmitTrade: boolean
+  blockSubmitTrade: boolean;
 }
 
 export const Mobile = ({
@@ -41,7 +42,7 @@ export const Mobile = ({
   loadMoreCards,
   onCardSelection,
   onConfirmTrade,
-  blockSubmitTrade
+  blockSubmitTrade,
 }: MobileProps) => {
   const storeContext = useContext(StoreContext);
   const [cardResponsibility, setCardResponsibility] = useState<"wants" | "offers">("wants");
@@ -74,7 +75,7 @@ export const Mobile = ({
                   openDrawer(true);
                 }}
               >
-                <PlusOutlined className="m-auto" />
+                <GiCardPick className="m-auto text-3xl" />
               </div>
             ) : (
               <Card
@@ -104,7 +105,7 @@ export const Mobile = ({
                   openDrawer(true);
                 }}
               >
-                <PlusOutlined className="m-auto" />
+                <GiCardDiscard className="m-auto text-3xl" />
               </div>
             )}
             {offeredCards.length > 0 &&
@@ -132,7 +133,7 @@ export const Mobile = ({
         ref={sliderRef}
         className="slide-menu absolute z-10 h-[100px] w-full overflow-hidden rounded-3xl"
         style={{
-          top: isDrawerOpen ? "2em" : "100vh",
+          top: isDrawerOpen ? "8em" : "100vh",
         }}
       >
         <div className="relative top-[.75em] mx-[.75em] flex flex-col flex-wrap">
@@ -148,7 +149,6 @@ export const Mobile = ({
           />
           <div className="flex bg-white">
             <Input
-              id="francesco"
               ref={searchByNameInput}
               className="placeholder:hero-font !rounded-3xl"
               placeholder="Card search... (multiple names must be separated by coma)"

@@ -89,7 +89,7 @@ h6 {
   @apply pr-3 pl-3 pt-3 pb-2
 }
 
-.slick-list {
+.trade-slider .slick-list {
   overflow: visible !important;
 }
 /* .wrap-original-transform {

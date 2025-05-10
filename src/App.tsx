@@ -10,7 +10,7 @@ import {
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
 import OffersPage from "./pages/OffersPage";
-import TradesPage from "./pages/TradesPage";
+import TradesPage from "./pages/TradesPage/TradesPage";
 import ProfilePage from "./pages/ProfilePage";
 import SignInPage from "./pages/SignInPage";
 import RegisterPage from "./pages/RegisterPage";

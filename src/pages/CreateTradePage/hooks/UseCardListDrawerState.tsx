@@ -25,10 +25,6 @@ export default function UseCardListDrawerState(drawerRef: React.RefObject<HTMLDi
   };
 
   const onTouchMoveCapture = (e: React.TouchEvent<HTMLSpanElement>) => {
-    // debounceRef.current++;
-    // if (debounceRef.current < 8) return;
-    // debounceRef.current = 0;
-
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
@@ -36,6 +32,7 @@ export default function UseCardListDrawerState(drawerRef: React.RefObject<HTMLDi
     animationFrameRef.current = requestAnimationFrame(() => {
       const delta = e.touches[0].clientY - dragStart!.current!;
       drawerRef!.current!.style.transform = `translateY(${delta}px)`;
+      // drawerRef!.current!.style.height = `${delta}px`;
       animationFrameRef.current = null;
     });
   };
