@@ -26,8 +26,11 @@ function TradesPage() {
 
   return (
     <>
-      <Button className="!rounded-3xl"><NavLink to="/trades/create-trade">Create a trade</NavLink></Button>
-      <Button className="!rounded-3xl"><NavLink to="/trades/wonder-trade">Wonder Trade</NavLink></Button>
+    <div className="flex flex-wrap justify-evenly w-full">
+      <Button className="!rounded-md m-3 !h-[3em]"><NavLink to="/trades/create-trade">Create a trade</NavLink></Button>
+      <Button className="!rounded-md m-3 !h-[3em]"><NavLink to="/trades/wonder-trade">Wonder Trade</NavLink></Button>
+      
+    </div>
       <Trades amountToLoad={5} />
     </>
   );

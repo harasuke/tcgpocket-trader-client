@@ -3,30 +3,31 @@ import { useAuth } from "@clerk/clerk-react";
 
 export default function usePostAPI() {
   const { getToken, isLoaded } = useAuth();
-  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoaded) return;
 
     (async function _getToken() {
       const token = await getToken();
-      setToken(token);
     })();
   }, [isLoaded]);
 
   const postRequest = async (url: string, bodyObj: Object) => {
-    const headers = {};
-    headers["Content-Type"] = "application/json";
+    const token = await getToken();
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
 
     if (token != null) headers["Authorization"] = `Bearer ${token}`;
 
     const res = await fetch(url, {
-      method: "GET",
+      method: "POST",
       headers: { ...headers },
+      body: JSON.stringify(bodyObj),
     });
 
     if (!res.ok) {
-      throw new Error("Cannot load trades");
+      throw res;
     }
 
     return await res.json();

@@ -24,6 +24,8 @@ interface MobileProps {
   inputOnChange: () => void;
   loadMoreCards: () => void;
   onCardSelection: (type: "wants" | "offers", card: responseCard) => void;
+  onConfirmTrade: () => void;
+  blockSubmitTrade: boolean
 }
 
 export const Mobile = ({
@@ -38,6 +40,8 @@ export const Mobile = ({
   inputOnChange,
   loadMoreCards,
   onCardSelection,
+  onConfirmTrade,
+  blockSubmitTrade
 }: MobileProps) => {
   const storeContext = useContext(StoreContext);
   const [cardResponsibility, setCardResponsibility] = useState<"wants" | "offers">("wants");
@@ -86,9 +90,8 @@ export const Mobile = ({
           </div>
           <Button
             className="hero-font glow-button m-6 mx-auto !rounded-3xl outline-1"
-            onClick={() => {
-              console.log("");
-            }}
+            disabled={!offeredCards.length || wantedCard == null || blockSubmitTrade}
+            onClick={onConfirmTrade}
           >
             Confirm Trade
           </Button>
@@ -145,7 +148,7 @@ export const Mobile = ({
           />
           <div className="flex bg-white">
             <Input
-            id="francesco"
+              id="francesco"
               ref={searchByNameInput}
               className="placeholder:hero-font !rounded-3xl"
               placeholder="Card search... (multiple names must be separated by coma)"

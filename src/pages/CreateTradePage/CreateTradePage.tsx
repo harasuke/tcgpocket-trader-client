@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { InputRef, Pagination } from "antd";
+import { InputRef, message, Pagination } from "antd";
 import useDetectDevice from "src/hooks/UseDetectDevice";
 import { DesktopBig } from "./DesktopBig";
 import useFilterModal from "./hooks/UseFilterModal";
@@ -12,7 +12,9 @@ import { CardPack } from "src/types/CardPack";
 import useDebounceInput from "src/hooks/UseDebounceInput";
 import { Mobile } from "./Mobile";
 import { Card } from "src/types/api/Card";
-import { EndpointsResponseType } from "src/types/Endpoints";
+import { Endpoints, EndpointsResponseType } from "src/types/Endpoints";
+import usePostAPI from "src/hooks/UsePostAPI";
+import { useNavigate } from "react-router";
 
 interface CreateTradePageProps {}
 
@@ -25,7 +27,13 @@ export interface Filters {
 }
 
 export const CreateTradePage = ({}: CreateTradePageProps) => {
+  const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
+
   const { device, screenWidth } = useDetectDevice();
+
+  const [blockSubmitTrade, setBlockSubmitTrade] = useState(false);
+
   /* Used for Pagination */
   const [cardsPerPage, setCardsPerPage] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,6 +69,8 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
     pack: [],
   });
   const [filtersAmount, setFiltersAmount] = useState(0);
+
+  const { postRequest } = usePostAPI();
 
   /* Call API to get all visible cards */
   const { res, loadingReq } = useSetSearchFilters({
@@ -207,6 +217,7 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
         backdropFilter: `opacity(.5)`,
       }}
     >
+      {contextHolder}
       {ModalComponent}
       {device === "Desktop" && screenWidth >= 768 && (
         <DesktopBig
@@ -257,7 +268,10 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           cardsAPIResponse={currentResponse}
           loadingAPICall={loadingReq}
           searchByNameInput={searchByName}
-          inputOnChange={() => {console.log("here"); setRefresh()}}
+          inputOnChange={() => {
+            console.log("here");
+            setRefresh();
+          }}
           cardsPerPage={cardsPerPage}
           filtersAmount={filtersAmount}
           setShowModal={setIsOpen}
@@ -266,6 +280,42 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           onCardSelection={onCardSelection}
           loadMoreCards={() => {
             setCurrentPage((prev) => prev + 1);
+          }}
+          blockSubmitTrade={blockSubmitTrade}
+          onConfirmTrade={() => {
+            postRequest(Endpoints.POST_CONFIRM_TRADE(), {
+              wantedCardId: wantedCard?.id,
+              offeredCardIds: offeredCards.map((c) => c.id),
+            })
+              .then((res) => {
+                setBlockSubmitTrade(true);
+                messageApi.open({
+                  type: "success",
+                  content: (
+                    <>
+                      Trade created !<br />
+                      You'll be redirected shortly
+                    </>
+                  ),
+                  onClose: () => {
+                    navigate("/trades");
+                  },
+                });
+              })
+              .catch((err) => {
+                if (err.status == 401)
+                  messageApi.open({
+                    type: "error",
+                    content: (
+                      <>
+                        There is a problem with your authentication.
+                        <br />
+                        Try again or Login
+                      </>
+                    ),
+                  });
+                else messageApi.open({ type: "error", content: err.statusText });
+              });
           }}
         />
       )}

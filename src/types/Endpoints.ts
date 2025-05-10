@@ -21,6 +21,10 @@ export const Endpoints = {
 
   TRADE: (id: string) =>
     `/api/trade/${id}`,
+
+  POST_CONFIRM_TRADE: () =>
+    `/api/trade`,
+
 } as const;
 
 export type EndpointsResponseType = {
