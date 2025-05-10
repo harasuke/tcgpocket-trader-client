@@ -157,6 +157,9 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
 
     switch (type) {
       case "wants": {
+        if (wantedCard == null && offeredCards.length && offeredCards.some((c) => c.id == card.id))
+          break;
+
         if (wantedCard == null) {
           setWantedCard(card);
           break;
@@ -201,7 +204,7 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
     <div
       style={{
         backgroundImage: `url("/bg-light.png")`,
-        backdropFilter: `opacity(.5)`
+        backdropFilter: `opacity(.5)`,
       }}
     >
       {ModalComponent}
@@ -254,7 +257,7 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           cardsAPIResponse={currentResponse}
           loadingAPICall={loadingReq}
           searchByNameInput={searchByName}
-          inputOnChange={() => setRefresh()}
+          inputOnChange={() => {console.log("here"); setRefresh()}}
           cardsPerPage={cardsPerPage}
           filtersAmount={filtersAmount}
           setShowModal={setIsOpen}

@@ -59,54 +59,65 @@ export const Mobile = ({
 
   return (
     <div className="h-auto w-auto overflow-hidden">
-      <div className="h-[100vh] w-full p-3 outline-1">
-        <div className="align-items-center flex flex-col">
-          <div className="flex flex-col rounded-md bg-gray-400 p-3">
-            <span className="text-center">Wants</span>
-            <div
-              className="empty-card-slot flex h-[120px] w-[80px] rounded-md outline-1 outline-gray-300"
-              onClick={() => {
-                setCardResponsibility("wants");
-                openDrawer(true);
-              }}
-            >
-              {wantedCard != null ? (
-                <Card url={wantedCard.imageUrl} canZoom={false} />
-              ) : (
+      <div className="trade-mobile-wrapper w-full outline-1">
+        <div className="align-items-center m-auto flex flex-col">
+          <div className="m-auto flex h-[180px] w-[270px] flex-col rounded-3xl bg-blue-300 p-3">
+            {wantedCard == null ? (
+              <div
+                className="empty-card-slot m-auto flex h-[120px] w-[80px] rounded-md outline-1 outline-gray-300"
+                onClick={() => {
+                  setCardResponsibility("wants");
+                  openDrawer(true);
+                }}
+              >
                 <PlusOutlined className="m-auto" />
-              )}
-            </div>
+              </div>
+            ) : (
+              <Card
+                extraClasses="!w-[7em] !m-auto"
+                url={wantedCard.imageUrl}
+                canZoom={false}
+                onClick={() => {
+                  setCardResponsibility("wants");
+                  openDrawer(true);
+                }}
+              />
+            )}
           </div>
-
-
-
-
-
           <Button
-            className="hero-font m-3 mx-auto !rounded-3xl outline-1"
+            className="hero-font glow-button m-6 mx-auto !rounded-3xl outline-1"
             onClick={() => {
               console.log("");
             }}
           >
             Confirm Trade
           </Button>
-
-
-
-
-          <div className="grid grid-cols-4 gap-2">
-            <div
-              className="empty-card-slot flex h-[130px] aspect-[2/3] w-auto rounded-md outline-1 outline-gray-300"
-              onClick={() => {
-                setCardResponsibility("offers");
-                openDrawer(true);
-              }}
-            >
-              <PlusOutlined className="m-auto" />
-            </div>
+          <div className="m-auto grid h-[180px] w-[270px] grid-cols-1 grid-rows-1 place-items-center rounded-3xl bg-red-300">
+            {!offeredCards.length && (
+              <div
+                className="empty-card-slot flex aspect-[2/3] h-[130px] w-auto rounded-md outline-1 outline-gray-300"
+                onClick={() => {
+                  setCardResponsibility("offers");
+                  openDrawer(true);
+                }}
+              >
+                <PlusOutlined className="m-auto" />
+              </div>
+            )}
             {offeredCards.length > 0 &&
               offeredCards.map((c, index) => (
-                <Card extraClasses="" key={index} url={c.imageUrl} canZoom={false} />
+                <Card
+                  extraClasses="col-start-1 row-start-1 !w-[7em] !mr-[2em]"
+                  key={index}
+                  url={c.imageUrl}
+                  canZoom={false}
+                  index={index}
+                  isBatchView={false}
+                  onClick={() => {
+                    openDrawer(true);
+                    setCardResponsibility("offers");
+                  }}
+                />
               ))}
           </div>
         </div>
@@ -114,17 +125,17 @@ export const Mobile = ({
 
       {/* sezione popup */}
       <div
-        className="slide-menu absolute z-10 h-[100px] w-full overflow-hidden rounded-2xl"
         id="slideit"
         ref={sliderRef}
+        className="slide-menu absolute z-10 h-[100px] w-full overflow-hidden rounded-3xl"
         style={{
-          top: isDrawerOpen ? "8em" : "100vh",
+          top: isDrawerOpen ? "2em" : "100vh",
         }}
       >
         <div className="relative top-[.75em] mx-[.75em] flex flex-col flex-wrap">
           <LineOutlined
             id="handle"
-            className="mx-auto mb-1 h-[2ch] outline-1"
+            className="mx-auto mb-1 h-[2ch]"
             onClick={() => {
               openDrawer(false);
             }}
@@ -134,19 +145,31 @@ export const Mobile = ({
           />
           <div className="flex bg-white">
             <Input
+            id="francesco"
               ref={searchByNameInput}
-              className="!rounded-3xl"
+              className="placeholder:hero-font !rounded-3xl"
               placeholder="Card search... (multiple names must be separated by coma)"
               prefix={<SearchOutlined />}
               onChange={inputOnChange}
               suffix={
-                <button className="cursor-pointer" onClick={() => console.log("hey")}>
+                <button
+                  className="cursor-pointer"
+                  onClick={() => {
+                    if (!searchByNameInput?.current?.input) return;
+                    searchByNameInput.current = null;
+                    console.log(searchByNameInput.current);
+                    inputOnChange();
+                  }}
+                >
                   <CloseOutlined />
                 </button>
               }
             />
             <Badge count={filtersAmount} className="filter-badge" color={storeContext?.navbarColor}>
-              <Button className="ml-2 !rounded-3xl outline-1" onClick={() => setShowModal(true)}>
+              <Button
+                className="hero-font ml-2 !rounded-3xl outline-1"
+                onClick={() => setShowModal(true)}
+              >
                 <FilterIcon />
                 Filters
               </Button>
@@ -157,6 +180,14 @@ export const Mobile = ({
           className="all-cards-scrollable relative top-[.75em] m-3 overflow-scroll"
           onScrollEnd={whenFinishedScrolling}
         >
+          {(wantedCard != null || offeredCards.length > 0) && (
+            <div className="text-dark hero-font sticky top-0 z-10 mb-1 bg-white text-xs">
+              <div className="pulse-animation w-auto bg-yellow-300 p-1">
+                The rarity filter is being overwritten since at least one card for the trade has
+                already been selected
+              </div>
+            </div>
+          )}
           <div className="cardex-grid relative grid place-items-center gap-x-2 !gap-y-4 overflow-x-hidden sm:!gap-y-2">
             <>
               {cardsAPIResponse?.data?.map((c, index: number) => (

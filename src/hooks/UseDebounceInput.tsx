@@ -16,6 +16,7 @@ export default function useDebounceInput(
   };
 
   useEffect(() => {
+    console.log('TESTING', inputRef.current?.input?.value)
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }

@@ -13,7 +13,7 @@ const Navbar = () => {
 
   return (
     <div
-      className="navbar-transition sticky top-0 z-100 flex h-[5em] w-full flex-row justify-between"
+      className="navbar-transition sticky top-0 z-100 flex h-[--navbar-height] w-full flex-row justify-between"
       style={{
         backgroundColor: storeContext?.navbarColor,
       }}
