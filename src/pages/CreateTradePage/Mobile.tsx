@@ -133,7 +133,7 @@ export const Mobile = ({
         ref={sliderRef}
         className="slide-menu absolute z-10 h-[100px] w-full overflow-hidden rounded-3xl"
         style={{
-          top: isDrawerOpen ? "8em" : "100vh",
+          top: isDrawerOpen ? "3em" : "100vh",
         }}
       >
         <div className="relative top-[.75em] mx-[.75em] flex flex-col flex-wrap">

@@ -1,0 +1,3 @@
+.desktop-trade-wrapper {
+  height: calc(100vh - var(--navbar-height) - 4px);
+}

@@ -88,10 +88,10 @@ h6 {
   align-items: start;
   @apply pr-3 pl-3 pt-3 pb-2
 }
-
+/* 
 .trade-slider .slick-list {
   overflow: visible !important;
-}
+} */
 /* .wrap-original-transform {
   perspective: 280px !important;
   transform-style: preserve-3d !important;

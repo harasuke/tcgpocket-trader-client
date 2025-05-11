@@ -12,9 +12,10 @@ import { CardPack } from "src/types/CardPack";
 import useDebounceInput from "src/hooks/UseDebounceInput";
 import { Mobile } from "./Mobile";
 import { Card } from "src/types/api/Card";
-import { Endpoints, EndpointsResponseType } from "src/types/Endpoints";
-import usePostAPI from "src/hooks/UsePostAPI";
+import { EndpointsResponseType } from "src/types/Endpoints";
 import { useNavigate } from "react-router";
+import useConfirmTrade from "src/hooks/api/UseConfirmTrade";
+import "src/pages/CreateTradePage/CreateTradePage.css";
 
 interface CreateTradePageProps {}
 
@@ -70,7 +71,8 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
   });
   const [filtersAmount, setFiltersAmount] = useState(0);
 
-  const { postRequest } = usePostAPI();
+  /** Post request to submit trade infos */
+  const { confirmTrade } = useConfirmTrade(messageApi, setBlockSubmitTrade);
 
   /* Call API to get all visible cards */
   const { res, loadingReq } = useSetSearchFilters({
@@ -219,7 +221,7 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
     >
       {contextHolder}
       {ModalComponent}
-      {device === "Desktop" && screenWidth >= 768 && (
+      {device === "Desktop" && (
         <DesktopBig
           cardsAPIResponse={res}
           loadingResponse={loadingReq}
@@ -232,7 +234,11 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           setShowModal={setIsOpen}
           wantedCard={wantedCard}
           offeredCards={offeredCards}
+          blockSubmitTrade={blockSubmitTrade}
           onCardSelection={onCardSelection}
+          onConfirmTrade={() => {
+            confirmTrade(wantedCard, offeredCards);
+          }}
         >
           {!loadingReq && (
             <Pagination
@@ -252,24 +258,24 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           )}
         </DesktopBig>
       )}
-      {device === "Desktop" && screenWidth < 768 && (
+      {/* {device === "Desktop" && screenWidth < 768 && (
         <div className="card-searcher m-auto h-auto w-[90%] rounded-full">
           <div>Versione desktop ridotta</div>
         </div>
-      )}
-      {device === "Mobile" ||
+      )} */}
+      {/* {device === "Mobile" ||
         (device === "Tablet" && screenWidth >= 768 && (
           <div className="card-searcher m-auto h-auto w-[90%] rounded-full">
             <div>versione mobile/Tablet larga</div>
           </div>
-        ))}
-      {device === "Mobile" && screenWidth <= 768 && (
+        ))} */}
+      {/* {device === "Mobile" || device === "Tablet" && screenWidth <= 768 && ( */}
+      {(device === "Mobile" || device === "Tablet") && (
         <Mobile
           cardsAPIResponse={currentResponse}
           loadingAPICall={loadingReq}
           searchByNameInput={searchByName}
           inputOnChange={() => {
-            console.log("here");
             setRefresh();
           }}
           cardsPerPage={cardsPerPage}
@@ -283,40 +289,7 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
           }}
           blockSubmitTrade={blockSubmitTrade}
           onConfirmTrade={() => {
-            postRequest(Endpoints.POST_CONFIRM_TRADE(), {
-              wantedCardId: wantedCard?.id,
-              offeredCardIds: offeredCards.map((c) => c.id),
-            })
-              .then((res) => {
-                setBlockSubmitTrade(true);
-                messageApi.open({
-                  type: "success",
-                  duration: 1.5,
-                  content: (
-                    <>
-                      Trade created !<br />
-                      You'll be redirected shortly
-                    </>
-                  ),
-                  onClose: () => {
-                    navigate("/trades");
-                  },
-                });
-              })
-              .catch((err) => {
-                if (err.status == 401)
-                  messageApi.open({
-                    type: "error",
-                    content: (
-                      <>
-                        There is a problem with your authentication.
-                        <br />
-                        Try again or Login
-                      </>
-                    ),
-                  });
-                else messageApi.open({ type: "error", content: err.statusText });
-              });
+            confirmTrade(wantedCard!, offeredCards!);
           }}
         />
       )}

@@ -1,4 +1,4 @@
-import { CloseOutlined, InboxOutlined, SearchOutlined } from "@ant-design/icons";
+import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
 import { Badge, Button, Input, InputRef } from "antd";
 import React, { useContext } from "react";
 import { useDrop } from "react-dnd";
@@ -9,7 +9,6 @@ import { Meta } from "src/types/api/Meta";
 import { DraggableCard } from "./components/DraggableCard";
 import Card from "src/components/Card";
 import { IconMdiPokeball } from "src/components/CustomIcons/IconMdiPokeball";
-import { Card as responseCard } from "src/types/api/Card";
 
 interface DesktopBigProps {
   children: React.ReactNode;
@@ -21,8 +20,10 @@ interface DesktopBigProps {
   wantedCard: any;
   offeredCards: any[];
   searchByNameInput: React.RefObject<InputRef | null>;
+  onCardSelection: any;
   inputOnChange: () => void;
-  onCardSelection: any
+  onConfirmTrade: () => void;
+  blockSubmitTrade: boolean;
 }
 
 export const DesktopBig = ({
@@ -36,7 +37,9 @@ export const DesktopBig = ({
   offeredCards,
   searchByNameInput,
   inputOnChange,
-  onCardSelection
+  onCardSelection,
+  onConfirmTrade,
+  blockSubmitTrade,
 }: DesktopBigProps) => {
   const storeContext = useContext(StoreContext);
 
@@ -59,8 +62,8 @@ export const DesktopBig = ({
   }));
 
   return (
-    <div className="flex h-[88vh] w-full overflow-hidden">
-      <div className="flex w-[40%] min-w-[320px] flex-col">
+    <div className="desktop-trade-wrapper flex w-full overflow-hidden">
+      <div className="flex w-[40%] min-w-[320px] flex-col m-2">
         <div
           className="m-2 grid h-[50vh] grid-cols-1 grid-rows-1 place-items-center rounded-md bg-gray-800 outline-[6px] outline-green-800"
           // className="trade-builder outline-grey-500 m-1 grid h-[50vh] grid-cols-1 grid-rows-1 place-items-center rounded-xl bg-gray-200 outline-1 outline-dashed"
@@ -94,6 +97,13 @@ export const DesktopBig = ({
             />
           )}
         </div>
+        <Button
+          className="hero-font glow-button m-3 mx-auto !rounded-3xl text-3xl outline-1"
+          disabled={!offeredCards.length || wantedCard == null || blockSubmitTrade}
+          onClick={onConfirmTrade}
+        >
+          Confirm Trade
+        </Button>
         <div
           className="trade-builder outline-grey-500 m-2 grid h-[50vh] grid-cols-1 grid-rows-1 place-items-center overflow-hidden rounded-xl bg-gray-800 outline-[6px] outline-red-800"
           ref={dropOffers as unknown as React.Ref<HTMLDivElement>}
@@ -148,6 +158,14 @@ export const DesktopBig = ({
             }
           />
         </div>
+        {(wantedCard != null || offeredCards.length > 0) && (
+          <div className="text-dark hero-font sticky top-[5em] z-10 mx-3 my-1 bg-white text-xs">
+            <div className="pulse-animation w-auto bg-yellow-300 p-1">
+              The rarity filter is being overwritten since at least one card for the trade has
+              already been selected
+            </div>
+          </div>
+        )}
         <div className="cardex-grid m-3 grid place-items-center gap-x-2 !gap-y-4 overflow-x-hidden sm:!gap-y-2">
           {loadingResponse
             ? Array.from({ length: cardsPerPage }).map((c: any, index: number) => (
@@ -163,7 +181,7 @@ export const DesktopBig = ({
                     onCardSelection(droppedLocationName, card);
                     // if (droppedLocationName === "wants") setWantedCard(card);
                     // if (droppedLocationName === "offers")
-                      // setOfferedCards((prevItems) => [...prevItems, card]);
+                    // setOfferedCards((prevItems) => [...prevItems, card]);
 
                     // setOverrideRarity(card.rarity);
                     // setCurrentPage(1);
