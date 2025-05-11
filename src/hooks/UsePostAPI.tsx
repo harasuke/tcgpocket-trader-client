@@ -27,7 +27,7 @@ export default function usePostAPI() {
     });
 
     if (!res.ok) {
-      throw res;
+      throw await res.json();
     }
 
     return await res.json();

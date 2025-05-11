@@ -8,15 +8,15 @@ export default function useConfirmTrade(messageApi: any, setBlockSubmitTrade: an
   const { postRequest: _postRequest } = usePostAPI();
   const navigate = useNavigate();
 
-  const confirmTrade = (wantedCard: Card|null, offeredCards: Card[]|[]) => {
+  const confirmTrade = (wantedCard: Card | null, offeredCards: Card[] | []) => {
     if (wantedCard == null || offeredCards.length == 0) {
       messageApi.open({
         type: "error",
         content: (
           <>
-            There is a problem with your authentication.
+            Trade requisites not satisfied.
             <br />
-            Try again or Login
+            At least 1 card has to be select for each category.
           </>
         ),
       });
@@ -44,18 +44,19 @@ export default function useConfirmTrade(messageApi: any, setBlockSubmitTrade: an
         });
       })
       .catch((err) => {
-        if (err.status == 401)
-          messageApi.open({
+        if (!!!err?.message)
+          return messageApi.open({
             type: "error",
             content: (
               <>
-                There is a problem with your authentication.
+                Unhandle exception.
                 <br />
-                Try again or Login
+                Send us a ticket
               </>
             ),
           });
-        else messageApi.open({ type: "error", content: err.statusText });
+
+        messageApi.open({ type: "error", content: err.message });
       });
   };
 
