@@ -25,6 +25,12 @@ export const Endpoints = {
   POST_CONFIRM_TRADE: () =>
     `/api/trade`,
 
+  PERFECT_TRADES: () =>
+    `/api/user/matched-trades/list`,
+
+  MATCHED_TRADES: () =>
+    `/api/user/recommendations/list`,
+
 } as const;
 
 export type EndpointsResponseType = {
@@ -32,4 +38,24 @@ export type EndpointsResponseType = {
     data: Card[];
     meta: Meta;
   };
+
+  PERFECT_TRADES: {
+    data: {
+      id: string, // the id of the trade
+      userFriendCode: string // friendcode string with only number of the trade creator
+      offeredCards: Card[]
+      wantedCard: Card
+    }[],
+    meta: Meta;
+  },
+
+  MATCHED_TRADES: {
+    data: {
+      id: string, // the id of the trade
+      userFriendCode: string // friendcode string with only number of the trade creator
+      offeredCards: Card[]
+      wantedCard: Card
+    }[],
+    meta: Meta;
+  }
 }

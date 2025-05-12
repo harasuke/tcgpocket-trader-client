@@ -17,6 +17,7 @@ import RegisterPage from "./pages/RegisterPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { CreateTradePage } from "./pages/CreateTradePage/CreateTradePage";
 import { AccessRequiredPage } from "./pages/AccessRequiredPage/AccessRequiredPage";
+import { AllTrades } from "./pages/AllTrades/AllTrades";
 
 let router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,8 +30,10 @@ let router = createBrowserRouter(
         <Route path="/register" element={<RegisterPage />} />
       </Route>
       <Route path="/trades" element={<TradesPage />} />
+      <Route path="/trades/view" element={<AllTrades />} />
       <Route path="/trades/create-trade" element={<CreateTradePage />} />
       <Route path="/trades/wonder-trade" element={<>placeholder</>} />
+
       <Route path="/offers" element={<OffersPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/access-required" element={<AccessRequiredPage/>} />

@@ -29,18 +29,20 @@ function TradesPage() {
   return (
     <>
       <div className="flex w-full flex-wrap justify-evenly">
-        <div className="hero-text create-trade-main-button relative m-3 h-[110px] w-full cursor-pointer overflow-hidden rounded-3xl shadow-md">
-          <div className="align-center relative block flex h-[100%] w-[100%] items-center justify-center text-white">
-            <GiCardRandom className="relative z-1 mr-[-.4ch] text-6xl text-gray-300" />
-            <NavLink to="/trades/create-trade" className="top-text hero-font align-center text-3xl">
-              Create a trade
-            </NavLink>
+        <NavLink to="/trades/create-trade" className="cursor-pointer w-full">
+          <div className="hero-text create-trade-main-button relative m-3 h-[110px] w-full overflow-hidden rounded-3xl shadow-md">
+            <div className="align-center relative block flex h-[100%] w-[100%] items-center justify-center text-white">
+              <GiCardRandom className="relative z-1 mr-[-.4ch] text-6xl text-gray-300" />
+              <span className="top-text hero-font align-center text-3xl">Create a trade</span>
+            </div>
           </div>
-        </div>
+        </NavLink>
 
         <Button className="m-3 !h-[3em] !rounded-md">
           <NavLink to="/trades/wonder-trade">Wonder Trade</NavLink>
         </Button>
+
+        <NavLink className="" to="/trades/view">View all Trades</NavLink>
       </div>
       <Trades amountToLoad={5} />
     </>
