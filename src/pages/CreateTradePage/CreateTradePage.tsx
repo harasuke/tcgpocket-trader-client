@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import useStateRef from "react-usestateref";
 import { InputRef, message, Pagination } from "antd";
 import useDetectDevice from "src/hooks/UseDetectDevice";
 import { DesktopBig } from "./DesktopBig";
@@ -46,8 +47,9 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
     device != "Desktop" ? 350 : 200,
   );
 
-  const [offeredCards, setOfferedCards] = useState<Card[]>([]);
-  const [wantedCard, setWantedCard] = useState<Card | null>(null);
+  const [offeredCards, setOfferedCards, offeredCardsRef] = useStateRef<Card[]>([]);
+  const [wantedCard, setWantedCard, wantedCardRef] = useStateRef<Card | null>(null);
+
   const [currentResponse, setCurrentResponse] = useState<EndpointsResponseType["CARD_LIST"] | null>(
     null,
   );
@@ -138,47 +140,57 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
   }, [debouncedInput]);
 
   const resetCardLogic = (type: any, card: any) => {
-    if (device === "Mobile" || device === "Tablet") {
-      /**
-       * When this function gets called, offeredCards and wantedCard have the value of the previous state.
-       * CurrentResponse has to be resetted only if after the current card click, there will be no other cards selected or there will be only 1 card select.
-       * This must be done because the first card selected determines a card filter based by rarity.
-       * Trades can only be made between cards by the same rarity.
-       *
-       * If by clicking the card is not the only card or it's not the last, I have to always keep the current api call result and always append new cards in case of a user scrolls to the bottom.
-       */
-      if (
-        type == "offers" &&
-        wantedCard == null &&
-        (!offeredCards.length || (offeredCards.length == 1 && offeredCards[0].id == card.id))
-      ) {
-        setCurrentResponse(null);
-      } else if (
-        type == "wants" &&
-        offeredCards.length <= 0 &&
-        (wantedCard == null || wantedCard.id == card.id)
-      ) {
-        setCurrentResponse(null);
-      }
-      setCurrentPage(1);
+    if (device !== "Mobile" && device !== "Tablet") return;
+    /**
+     * When this function gets called, offeredCards and wantedCard have the value of the previous state.
+     * CurrentResponse has to be resetted only if after the current card click, there will be no other cards selected or there will be only 1 card select.
+     * This must be done because the first card selected determines a card filter based by rarity.
+     * Trades can only be made between cards by the same rarity.
+     *
+     * If by clicking the card is not the only card or it's not the last, I have to always keep the current api call result and always append new cards in case of a user scrolls to the bottom.
+     */
+    if (
+      type == "offers" &&
+      wantedCard == null &&
+      (!offeredCards.length || (offeredCards.length == 1 && offeredCards[0].id == card.id))
+    ) {
+      setCurrentResponse(null);
+    } else if (
+      type == "wants" &&
+      offeredCards.length <= 0 &&
+      (wantedCard == null || wantedCard.id == card.id)
+    ) {
+      setCurrentResponse(null);
     }
+    setCurrentPage(1);
   };
 
-  const onCardSelection = (type: "wants" | "offers", card: Card) => {
+  const onCardSelection = (type: "wants" | "offers", card: Card, toRemove: boolean = false) => {
     resetCardLogic(type, card);
 
     switch (type) {
       case "wants": {
-        if (wantedCard == null && offeredCards.length && offeredCards.some((c) => c.id == card.id))
-          break;
+        // if (wantedCardRef.current == null && offeredCardsRef.current.length && offeredCardsRef.current.some((c) => c.id == card.id))
+        //   break;
+        if (offeredCardsRef.current.some((c) => c.id === card.id)) break;
 
-        if (wantedCard == null) {
+        if (wantedCardRef.current == null) {
           setWantedCard(card);
           break;
         }
 
-        if (wantedCard.id === card.id) {
+        if (device != "Desktop" && wantedCardRef.current.id == card.id) {
           setWantedCard(null);
+          break;
+        }
+
+        if (toRemove && device === "Desktop") {
+          setWantedCard(null);
+          break;
+        }
+
+        if (wantedCardRef.current.id != card.id) {
+          setWantedCard(card);
           break;
         }
 
@@ -186,26 +198,30 @@ export const CreateTradePage = ({}: CreateTradePageProps) => {
       }
 
       case "offers": {
-        if (wantedCard != null && card.id == wantedCard.id) break;
+        if (wantedCardRef.current != null && card.id == wantedCardRef.current.id) break;
 
-        const alreadyExists = offeredCards.findIndex((_c) => _c.id == card.id);
-        if (alreadyExists !== -1)
-          setOfferedCards((currentOffered) => {
-            const newList = [...currentOffered.filter((_c) => _c.id !== card.id)];
-            return newList;
-          });
-        else
-          setOfferedCards((currentOffered) => {
-            if (currentOffered.length < 5) {
-              if (
-                currentOffered.length !=
-                currentOffered.filter((o) => o.rarity === card.rarity).length
-              )
-                return [...currentOffered];
-              else return (currentOffered = [...currentOffered, card]);
+        setOfferedCards((currentOffered) => {
+          const alreadyExists = currentOffered.some((_c) => _c.id === card.id);
+
+          if (alreadyExists) {
+            if (toRemove && device === "Desktop")
+              return currentOffered.filter((_c) => _c.id !== card.id);
+
+            if (device !== "Desktop") return currentOffered.filter((_c) => _c.id !== card.id);
+
+            return currentOffered;
+          }
+
+          // Se stai provando ad aggiungere
+          if (currentOffered.length < 5) {
+            const sameRarity = currentOffered.every((c) => c.rarity === card.rarity);
+            if (sameRarity || currentOffered.length === 0) {
+              return [...currentOffered, card];
             }
-            return [...currentOffered];
-          });
+          }
+
+          return currentOffered;
+        });
 
         break;
       }

@@ -1,6 +1,6 @@
 import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
 import { Badge, Button, Input, InputRef } from "antd";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useDrop } from "react-dnd";
 import { FilterIcon } from "src/assets/FilterIcon";
 import SkeletonCard from "src/components/SkeletonCard/SkeletonCard";
@@ -61,9 +61,16 @@ export const DesktopBig = ({
     }),
   }));
 
+  useEffect(() => {
+    console.log(
+      "CHILD sees offeredCards:",
+      offeredCards.map((c) => c.id),
+    );
+  }, [offeredCards]);
+
   return (
     <div className="desktop-trade-wrapper flex w-full overflow-hidden">
-      <div className="flex w-[40%] min-w-[320px] flex-col m-2">
+      <div className="m-2 flex w-[40%] min-w-[320px] flex-col">
         <div
           className="m-2 grid h-[50vh] grid-cols-1 grid-rows-1 place-items-center rounded-md bg-gray-800 outline-[6px] outline-green-800"
           // className="trade-builder outline-grey-500 m-1 grid h-[50vh] grid-cols-1 grid-rows-1 place-items-center rounded-xl bg-gray-200 outline-1 outline-dashed"
@@ -90,10 +97,13 @@ export const DesktopBig = ({
             rimuovi carte
           </button> */}
           {wantedCard != undefined && (
-            <Card
-              url={wantedCard.imageUrl}
-              canZoom={false}
-              extraClasses="col-start-1 row-start-1 z-2"
+            <DraggableCard
+              card={wantedCard}
+              className="z-2 col-start-1 row-start-1"
+              cardClass="w-[11em]"
+              droppedOutside={(card) => {
+                onCardSelection("wants", card, true);
+              }}
             />
           )}
         </div>
@@ -121,12 +131,15 @@ export const DesktopBig = ({
           </div>
           {offeredCards != undefined &&
             offeredCards?.map((card, index) => (
-              <Card
+              <DraggableCard
+                card={card}
                 key={index}
                 index={index}
-                url={card.imageUrl}
-                canZoom={false}
-                extraClasses="col-start-1 row-start-1 mb-[10%] mr-[3em]"
+                className="z-1 col-start-1 row-start-1 "
+                cardClass="w-[11em] mr-[3em] mb-[10%]"
+                droppedOutside={(card) => {
+                  onCardSelection("offers", card, true);
+                }}
               />
             ))}
         </div>
@@ -176,9 +189,8 @@ export const DesktopBig = ({
                 <DraggableCard
                   key={index}
                   card={c}
-                  whenDropped={(droppedLocationName, card) => {
-                    console.log("choosen card is ", card.id);
-                    onCardSelection(droppedLocationName, card);
+                  whenDropped={(droppedLocationName, c) => {
+                    onCardSelection(droppedLocationName, c);
                     // if (droppedLocationName === "wants") setWantedCard(card);
                     // if (droppedLocationName === "offers")
                     // setOfferedCards((prevItems) => [...prevItems, card]);
