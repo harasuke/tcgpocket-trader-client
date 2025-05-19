@@ -45,7 +45,7 @@ export const CardDexPage = ({}: CardDexPageProps) => {
   const languageOptions = Object.values(CardLanguage).map((e) => ({
     value: e,
     label: (
-      <span className="hero-font mr-[3ch] w-[4ch] flex items-center">
+      <span className="hero-font mr-[3ch] flex w-[4ch] items-center">
         <img className="align-self-center mr-1 !h-[2rem]" src={`/lang-flags/${e}.svg`} />
         {e.toUpperCase()}
       </span>
@@ -55,9 +55,9 @@ export const CardDexPage = ({}: CardDexPageProps) => {
   const [offeredCards, setOfferedCards, offeredCardsRef] = useStateRef<Card[]>([]);
   const [wantedCard, setWantedCard, wantedCardRef] = useStateRef<Card | null>(null);
 
-  const [currentResponse, setCurrentResponse] = useState<EndpointsResponseType["CARD_LIST"] | null>(
-    null,
-  );
+  // const [currentResponse, setCurrentResponse] = useState<EndpointsResponseType["CARD_LIST"] | null>(
+  //   null,
+  // );
 
   const { selectedFilters, setSelectedFilters, filters, setFilters, filtersAmount } =
     useStoreFilters();
@@ -66,7 +66,7 @@ export const CardDexPage = ({}: CardDexPageProps) => {
   const { confirmTrade } = useConfirmTrade(messageApi, setBlockSubmitTrade);
 
   /* Call API to get all visible cards */
-  const { res, loadingReq } = useSetSearchFilters({
+  const { res: currentResponse, loadingReq, setRes: setCurrentResponse } = useSetSearchFilters({
     ...filters,
     ...(wantedCard != null ? { rarity: [wantedCard.rarity] } : {}),
     ...(offeredCards.length ? { rarity: [offeredCards[0]?.rarity] } : {}),
@@ -89,36 +89,6 @@ export const CardDexPage = ({}: CardDexPageProps) => {
     setCurrentPage,
     wantedCard?.rarity ?? offeredCards[0]?.rarity ?? undefined,
   );
-
-  useEffect(() => {
-    // if (device !== "Mobile" && device !== "Tablet") return;
-    if (
-      !currentResponse ||
-      !currentResponse?.data ||
-      !Array.isArray(currentResponse?.data) ||
-      !currentResponse?.meta
-    )
-      return setCurrentResponse(res);
-
-    const data = [...currentResponse?.data, ...res.data];
-    const meta = res.meta;
-    setCurrentResponse({ data, meta });
-  }, [res]);
-
-  useEffect(() => {
-    setCurrentResponse(null);
-    setCurrentPage(1);
-  }, [filters]);
-
-  useEffect(() => {
-    setCurrentResponse(null);
-    setCurrentPage(1);
-  }, [device]);
-
-  useEffect(() => {
-    setCurrentResponse(null);
-    setCurrentPage(1);
-  }, [debouncedInput]);
 
   const resetCardLogic = (type: any, card: any) => {
     /**
@@ -262,20 +232,9 @@ export const CardDexPage = ({}: CardDexPageProps) => {
                 />
                 {currentLanguage.toUpperCase()}
               </span>
-              // <span className="hero-font mr-6 flex text-xl">
-              //   <img className="align-self-center" src={`/lang-flags/${currentLanguage}.svg`} />
-              //   {currentLanguage.toUpperCase()}
-              // </span>
             ),
           }}
         ></Select>
-        {/* <Button className="hero-font ml-2 !rounded-3xl outline-1" onClick={() => setIsOpen(true)}>
-          <img
-            className="align-self-center h-[2em] rounded-md bg-black shadow-md outline-1"
-            src={`/lang-flags/eng.svg`}
-          />
-          
-        </Button> */}
       </div>
       <CardDexList
         currentLanguage={currentLanguage}

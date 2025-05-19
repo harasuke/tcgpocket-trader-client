@@ -12,6 +12,7 @@ import { GiCardDiscard, GiCardPick } from "react-icons/gi";
 import UseCardListDrawerState from "src/pages/CreateTradePage/hooks/UseCardListDrawerState";
 import { MdOutlineClose } from "react-icons/md";
 import { CardexCard } from "src/components/CardexCard/CardexCard";
+import useStateRef from "react-usestateref";
 
 interface CardDexListProps {
   cardsAPIResponse: EndpointsResponseType["CARD_LIST"] | null;
@@ -22,8 +23,8 @@ interface CardDexListProps {
   onCardSelection: (type: "wants" | "offers", card: responseCard) => void;
   onConfirmTrade: () => void;
   blockSubmitTrade: boolean;
-  currentLanguage: any
-  openLanguageModalForCard: any
+  currentLanguage: any;
+  openLanguageModalForCard: any;
 }
 
 export const CardDexList = ({
@@ -32,17 +33,28 @@ export const CardDexList = ({
   loadMoreCards,
   cardsPerPage,
   currentLanguage,
-  openLanguageModalForCard
+  openLanguageModalForCard,
 }: CardDexListProps) => {
   const scrollableContent = useRef<HTMLDivElement | null>(null);
 
+  const [scrollQueue, setScrollQueue, scrollQueueRef] = useStateRef(0);
   const [refreshOnScroll, setRefreshOnScroll] = useState(false);
 
-
   useEffect(() => {
-    if ((cardsAPIResponse?.meta?.currentPage ?? 1) < (cardsAPIResponse?.meta?.totalPages ?? 1))
+    if ((cardsAPIResponse?.meta?.currentPage ?? 1) < (cardsAPIResponse?.meta?.totalPages ?? 1)) {
+      console.log('calling')
+      // if (loadingAPICall) setScrollQueue((prev) => prev++);
+      // else loadMoreCards();
       loadMoreCards();
+    }
   }, [refreshOnScroll]);
+
+  // useEffect(() => {
+  //   if (loadingAPICall || scrollQueueRef.current <= 0) return;
+
+  //   loadMoreCards();
+  //   setScrollQueue((prev) => prev--);
+  // }, [loadingAPICall, scrollQueue]);
 
   return (
     <div className="h-auto w-auto overflow-hidden">
@@ -109,9 +121,7 @@ export const CardDexList = ({
         </div>
       </div> */}
 
-      <div
-        className="h-[100%] w-full overflow-hidden"
-      >
+      <div className="h-[100%] w-full overflow-hidden">
         <ScrollHandler
           className="all-cards-scrollable relative top-[.75em] mx-3 overflow-y-scroll"
           onScrollEnd={() => setRefreshOnScroll((prev) => !prev)}

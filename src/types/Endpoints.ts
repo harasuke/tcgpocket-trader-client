@@ -53,6 +53,7 @@ export type EndpointsQueryParams = {
     type?: CardType[];
     set?: CardSet[];
     pack?: CardPack[];
+    name?: string;
     languageCode: string;
     limit: string;
     page: string;

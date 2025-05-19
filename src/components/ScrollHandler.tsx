@@ -42,7 +42,7 @@ export const ScrollHandler = memo(function ScrollHandler({
 
     requestAnimationFrame(() => {
       const el = thisRef.current!;
-      const threshold = 300;
+      const threshold = 400;
 
       const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - threshold;
 
