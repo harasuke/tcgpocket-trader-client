@@ -66,7 +66,11 @@ export const CardDexPage = ({}: CardDexPageProps) => {
   const { confirmTrade } = useConfirmTrade(messageApi, setBlockSubmitTrade);
 
   /* Call API to get all visible cards */
-  const { res: currentResponse, loadingReq, setRes: setCurrentResponse } = useSetSearchFilters({
+  const {
+    res: currentResponse,
+    loadingReq,
+    setRes: setCurrentResponse,
+  } = useSetSearchFilters({
     ...filters,
     ...(wantedCard != null ? { rarity: [wantedCard.rarity] } : {}),
     ...(offeredCards.length ? { rarity: [offeredCards[0]?.rarity] } : {}),
@@ -89,6 +93,19 @@ export const CardDexPage = ({}: CardDexPageProps) => {
     setCurrentPage,
     wantedCard?.rarity ?? offeredCards[0]?.rarity ?? undefined,
   );
+
+  useEffect(() => {
+    if (loadingReq) {
+      messageApi.open({
+        key: "carddex-loading",
+        type: "loading",
+        content: "Loading cards...",
+        duration: 0,
+      });
+    } else {
+      messageApi.destroy("carddex-loading");
+    }
+  }, [loadingReq]);
 
   const resetCardLogic = (type: any, card: any) => {
     /**
