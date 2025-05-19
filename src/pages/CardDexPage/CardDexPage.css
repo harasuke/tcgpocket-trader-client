@@ -1,0 +1,4 @@
+.language-selection > .ant-select-selector {
+  /* Simulate rounded-3xl */
+  border-radius: var(--radius-3xl);
+}

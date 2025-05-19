@@ -7,7 +7,7 @@ function HomePage() {
   const [count, setCount] = useState(0);
 
   return (
-    <div className="overflow-hidden" style={{ height: "calc(100vh - 5em)" }}>
+    <div className="overflow-hidden" style={{ height: "calc(100vh - var(--navbar-height) - .3em)" }}>
       <HeroSection />
     </div>
   );

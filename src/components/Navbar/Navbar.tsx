@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { UserOutlined } from "@ant-design/icons";
 import React, { useContext } from "react";
 import { Dropdown, MenuProps } from "antd";
@@ -8,6 +8,8 @@ import useDropdownItems from "./UseDropdownItems";
 const Navbar = () => {
   const { menuItems } = useDropdownItems();
   const storeContext = useContext(StoreContext);
+
+  const { pathname, search, hash } = useLocation();
 
   const items: MenuProps["items"] = menuItems;
 
@@ -19,35 +21,38 @@ const Navbar = () => {
       }}
     >
       <div className="m-3 self-center">
-        <img
-          className="w-20"
-          src="https://ptcgpocket.gg/wp-content/uploads/sites/51/2024/08/Pokemon-Trading-Card-Game-Pocket-Logo.webp"
-        ></img>
+        <NavLink to="/">
+          <img
+            className="w-20 cursor-pointer"
+            src="https://ptcgpocket.gg/wp-content/uploads/sites/51/2024/08/Pokemon-Trading-Card-Game-Pocket-Logo.webp"
+          />
+        </NavLink>
       </div>
       <div className="flex flex-row items-center">
         <NavLink
-          to="/"
-          className={({ isActive }) => (isActive ? "hero-font navbar-btn bg-gray-950" : "hero-font navbar-btn")}
-        >
-          Home
-        </NavLink>
-        <NavLink
           to="/trades"
-          className={({ isActive }) => (isActive ? "hero-font navbar-btn bg-gray-950" : "hero-font navbar-btn")}
+          className={({ isActive }) =>
+            isActive ? "hero-font navbar-btn bg-gray-950" : "hero-font navbar-btn"
+          }
         >
           Trades
         </NavLink>
         <NavLink
-          to="/offers"
-          className={({ isActive }) => (isActive ? "hero-font navbar-btn bg-gray-950" : "hero-font navbar-btn")}
+          to="/card-dex"
+          className={({ isActive }) =>
+            isActive ? "hero-font navbar-btn bg-gray-950" : "hero-font navbar-btn"
+          }
         >
-          Offers
+          My Card Dex
         </NavLink>
-        <Dropdown menu={{ items }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
-          <div className="mr-2 flex h-[2em] w-[2em] cursor-pointer items-center justify-center rounded-full bg-white">
-            <UserOutlined />
-          </div>
-        </Dropdown>
+
+        {pathname != "/profile" && (
+          <Dropdown menu={{ items }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
+            <div className="mr-2 flex h-[2em] w-[2em] cursor-pointer items-center justify-center rounded-full bg-white">
+              <UserOutlined />
+            </div>
+          </Dropdown>
+        )}
       </div>
     </div>
   );

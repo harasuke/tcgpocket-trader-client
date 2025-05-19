@@ -1,18 +1,39 @@
-import React, { memo, ReactNode, useEffect, useRef } from "react";
+import React, { forwardRef, memo, ReactNode, useEffect, useRef } from "react";
+import { useIsOverflowing } from "src/hooks/UseIsOverflowing";
 
 interface ScrollHandlerProps {
   className: string;
   children: ReactNode | ReactNode[];
+  handleOverflow?: boolean;
+  scrollableContent: React.RefObject<HTMLDivElement | null>;
   onScrollEnd?: () => void;
 }
 
 export const ScrollHandler = memo(function ScrollHandler({
   className,
   children,
+  handleOverflow,
   onScrollEnd,
 }: ScrollHandlerProps) {
   const thisRef = useRef<HTMLDivElement | null>(null);
   const debounce = useRef(false);
+  const timer = useRef<number | null>(null);
+
+  const _ = useIsOverflowing(thisRef, (hasOverflow) => {
+    if (!handleOverflow) return;
+    if (hasOverflow) return;
+    // If not overflowing, I need to load more cards until it overflows;
+
+    if (timer.current != null) {
+      clearTimeout(timer.current);
+      timer.current = null;
+    }
+    timer.current = setTimeout(() => {
+      clearTimeout(timer!.current!);
+      timer.current = null;
+      if (onScrollEnd) onScrollEnd();
+    }, 500);
+  });
 
   const handleScroll = () => {
     if (!thisRef.current || debounce.current) return;
@@ -21,7 +42,7 @@ export const ScrollHandler = memo(function ScrollHandler({
 
     requestAnimationFrame(() => {
       const el = thisRef.current!;
-      const threshold = 130;
+      const threshold = 300;
 
       const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - threshold;
 

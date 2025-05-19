@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import useGetAPI from "../UseGetAPI";
 import { Meta } from "src/types/api/Meta";
-import { Endpoints, EndpointsResponseType } from "src/types/Endpoints";
+import { Endpoints, EndpointsQueryParams, EndpointsResponseType } from "src/types/Endpoints";
 
 export interface cards_searchFilters_useGetAPI {
   data: { id: string; imageUrl: string }[];
@@ -9,7 +9,7 @@ export interface cards_searchFilters_useGetAPI {
 }
 
 export default function useSetSearchFilters(
-  queryParams: Object,
+  queryParams: EndpointsQueryParams['CARD_LIST'],
   resetResponse: boolean = true,
 ): {
   res: EndpointsResponseType["CARD_LIST"];

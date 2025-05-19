@@ -2,10 +2,11 @@ import React, { useRef, useState } from "react";
 import { Input, InputRef } from "antd";
 
 interface InputFriendcodeProps {
-  onCodeChange: (code: string) => void;
+  disabled?: boolean;
+  onCodeChange?: (code: string) => void;
 }
 
-export const InputFriendcode = ({ onCodeChange }: InputFriendcodeProps) => {
+export const InputFriendcode = ({ onCodeChange, disabled }: InputFriendcodeProps) => {
   const [friendCode1, setFriendCode1] = useState("");
   const [friendCode2, setFriendCode2] = useState("");
   const [friendCode3, setFriendCode3] = useState("");
@@ -19,7 +20,7 @@ export const InputFriendcode = ({ onCodeChange }: InputFriendcodeProps) => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setValue: React.Dispatch<React.SetStateAction<string>>,
-    nextRef?: React.RefObject<InputRef | null>
+    nextRef?: React.RefObject<InputRef | null>,
   ) => {
     const rawValue = e.target.value;
     const numericValue = rawValue.replace(/\D/g, "").slice(0, 4); // solo numeri, max 4
@@ -36,7 +37,7 @@ export const InputFriendcode = ({ onCodeChange }: InputFriendcodeProps) => {
       (ref3.current?.input?.value || "") +
       (ref4.current?.input?.value || "");
 
-    onCodeChange(code);
+    if (onCodeChange) onCodeChange(code);
   };
 
   return (
@@ -44,6 +45,7 @@ export const InputFriendcode = ({ onCodeChange }: InputFriendcodeProps) => {
       <span className="friend-code-label">FriendCode</span>
       <div className="flex w-full justify-evenly">
         <Input
+          disabled={disabled}
           className="max-w-[5em] p-3 text-center"
           placeholder="XXXX"
           value={friendCode1}
@@ -53,6 +55,7 @@ export const InputFriendcode = ({ onCodeChange }: InputFriendcodeProps) => {
         />
         <span>-</span>
         <Input
+          disabled={disabled}
           className="max-w-[5em] p-3 text-center"
           placeholder="XXXX"
           value={friendCode2}
@@ -62,6 +65,7 @@ export const InputFriendcode = ({ onCodeChange }: InputFriendcodeProps) => {
         />
         <span>-</span>
         <Input
+          disabled={disabled}
           className="max-w-[5em] p-3 text-center"
           placeholder="XXXX"
           value={friendCode3}
@@ -71,6 +75,7 @@ export const InputFriendcode = ({ onCodeChange }: InputFriendcodeProps) => {
         />
         <span>-</span>
         <Input
+          disabled={disabled}
           className="max-w-[5em] p-3 text-center"
           placeholder="XXXX"
           value={friendCode4}

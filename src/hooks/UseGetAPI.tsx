@@ -7,6 +7,7 @@ export default function useGetAPI(url: string, queryParams: Object | undefined =
   const [loadingReq, setLoadingReq] = useState(true);
 
   useEffect(() => {
+    if (url == "") return;
     if (!isLoaded) return;
     setLoadingReq(true);
 
@@ -23,7 +24,7 @@ export default function useGetAPI(url: string, queryParams: Object | undefined =
         console.log(url, "Exception on get request > ", err);
       }
     })();
-  }, [isLoaded, JSON.stringify(queryParams)]);
+  }, [isLoaded, JSON.stringify(queryParams), url]);
 
   return { res, loadingReq };
 }

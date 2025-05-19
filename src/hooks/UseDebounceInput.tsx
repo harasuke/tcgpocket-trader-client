@@ -1,14 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { InputRef } from "antd";
 
 export default function useDebounceInput(
-  inputRef: React.RefObject<InputRef | null>,
+  value: string | null,
   debounceTime: number,
 ) {
   const [_refresh, _setRefresh] = useState(false);
   const debounceTimeout = useRef<number | null>(null);
   const [debouncedInput, setDebouncedInput] = useState<string>(
-    inputRef.current?.input?.value || "",
+    value ?? "",
   );
 
   const setRefresh = () => {
@@ -16,14 +15,13 @@ export default function useDebounceInput(
   };
 
   useEffect(() => {
-    console.log('TESTING', inputRef.current?.input?.value)
     if (debounceTimeout.current) {
       clearTimeout(debounceTimeout.current);
     }
 
     debounceTimeout.current = setTimeout(() => {
-      const value = inputRef.current?.input?.value || "";
-      setDebouncedInput(value);
+      const val = value ?? "";
+      setDebouncedInput(val);
     }, debounceTime);
 
     return () => {
@@ -33,5 +31,5 @@ export default function useDebounceInput(
     };
   }, [debounceTimeout, _refresh]);
 
-  return { debouncedInput, setRefresh };
+  return { debouncedInput, setDebouncedInput, setRefresh };
 }

@@ -1,6 +1,10 @@
 import { Card } from "./api/Card";
-import { CardRarityType } from "./CardRarities";
+import { CardPack } from "./CardPack";
+import { CardRarity, CardRarityType } from "./CardRarities";
 import { Meta } from "src/types/api/Meta";
+import { CardSet } from "./CardSet";
+import { CardType } from "./CardType";
+import { CardElement } from "./CardElement";
 
 export const Endpoints = {
 
@@ -25,13 +29,35 @@ export const Endpoints = {
   POST_CONFIRM_TRADE: () =>
     `/api/trade`,
 
+  POST_CARD_INTENT_LANGUAGE: () =>
+    `/api/user/card/intent/`,
+
+  SINGLE_CARD_LANGUAGE: (cardId: string) =>
+    `/api/user/card/${cardId}`,
+
   PERFECT_TRADES: () =>
     `/api/user/matched-trades/list`,
 
   MATCHED_TRADES: () =>
     `/api/user/recommendations/list`,
 
+  USER: () =>
+    `/api/user/data`,
+
 } as const;
+
+export type EndpointsQueryParams = {
+  CARD_LIST: {
+    rarity?: CardRarity[];
+    element?: CardElement[];
+    type?: CardType[];
+    set?: CardSet[];
+    pack?: CardPack[];
+    languageCode: string;
+    limit: string;
+    page: string;
+  };
+}
 
 export type EndpointsResponseType = {
   CARD_LIST: {

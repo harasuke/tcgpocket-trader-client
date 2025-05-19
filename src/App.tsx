@@ -11,13 +11,15 @@ import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
 import OffersPage from "./pages/OffersPage";
 import TradesPage from "./pages/TradesPage/TradesPage";
-import ProfilePage from "./pages/ProfilePage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import SignInPage from "./pages/SignInPage";
 import RegisterPage from "./pages/RegisterPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { CreateTradePage } from "./pages/CreateTradePage/CreateTradePage";
 import { AccessRequiredPage } from "./pages/AccessRequiredPage/AccessRequiredPage";
 import { AllTrades } from "./pages/AllTrades/AllTrades";
+import { NewCreateTradePage } from "./pages/NewCreateTradePage/NewCreateTradePage";
+import { CardDexPage } from "./pages/CardDexPage/CardDexPage";
 
 let router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,9 +31,12 @@ let router = createBrowserRouter(
       <Route element={<ProtectedRoute to="/" condition={"loggedIn"} />}>
         <Route path="/register" element={<RegisterPage />} />
       </Route>
+
+        <Route path="/card-dex" element={<CardDexPage />} />
+
       <Route path="/trades" element={<TradesPage />} />
       <Route path="/trades/view" element={<AllTrades />} />
-      <Route path="/trades/create-trade" element={<CreateTradePage />} />
+      <Route path="/trades/create-trade" element={<NewCreateTradePage />} />
       <Route path="/trades/wonder-trade" element={<>placeholder</>} />
 
       <Route path="/offers" element={<OffersPage />} />

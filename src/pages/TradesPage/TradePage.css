@@ -26,3 +26,24 @@
   z-index: 1;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
+
+
+div[role="tab"] {
+  display: flex;
+
+  span.ant-tabs-tab-icon {
+    display: flex;
+    align-items: center;
+  }
+}
+.ant-tabs-ink-bar {
+  transition: all;
+}
+div.ant-tabs-nav-list:has(div[data-node-key="1"].ant-tabs-tab-active) .ant-tabs-ink-bar {
+  background-color: #e53935;
+  color: #e53935;
+}
+div.ant-tabs-nav-list:has(div[data-node-key="2"].ant-tabs-tab-active) .ant-tabs-ink-bar  {
+  background-color: #1e88e5;
+  color: #1e88e5;
+}

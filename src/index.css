@@ -130,7 +130,7 @@ h6 {
 
 /* Trade Section - view card list */
 .cardex-grid {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 }
 
 @media (width <= 768px) {
@@ -157,8 +157,8 @@ h6 {
 }
 
 .filter-badge .ant-scroll-number.ant-badge-count{
-  top: 1em;
-  right: .5em;
+  top: .5em;
+  right: 1em;
 }
 
 .search-block {
@@ -166,13 +166,16 @@ h6 {
 }
 
 .slide-menu {
+  height: calc(100vh - var(--navbar-height))
+}
+/* .slide-menu {
   transition: all .35s ease-in-out;
   height: calc(100vh - 5em);
   outline: 1px solid #dcdcdc;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
   border-radius: 1rem 1rem 0 0;
   background-color: white;
-}
+} */
 
 .slideup {
   top: 8em;
@@ -180,7 +183,8 @@ h6 {
 }
 
 .all-cards-scrollable {
-  height: calc(100vh - 12em); /* 8em(navbar) + ~ 3em(searchoptions+padding)*/
+  /* height: calc(100vh - 12em);  // 8em(navbar) + ~ 3em(searchoptions+padding) */
+  height: calc(100vh - calc(var(--navbar-height) + 3rem))
 }
 
 body:has(#slideit) {
