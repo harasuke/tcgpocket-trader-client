@@ -18,6 +18,7 @@ export default function useLanguageSelect(language: CardLanguage) {
   const LanguageSelect = (
     <Select
       className="language-selection !rounded-3xl"
+      virtual={false}
       options={languageOptions}
       onChange={(value) => {
         setCurrentLanguage(value as unknown as CardLanguage);

@@ -27,6 +27,7 @@ export const FiltersForm = ({
       {/* Rarity */}
       <Select
         disabled={overrideRarity != undefined ? true : false}
+        virtual={false}
         className="custom-select"
         allowClear
         mode="multiple"
@@ -52,6 +53,7 @@ export const FiltersForm = ({
       {/* Card energy type */}
       <Select
         className="custom-select"
+        virtual={false}
         allowClear
         mode="multiple"
         placeholder="Energy type"
@@ -76,6 +78,7 @@ export const FiltersForm = ({
       {/* Card type (Traniner / Pokemon) */}
       <Select
         className="custom-select"
+        virtual={false}
         allowClear
         mode="multiple"
         placeholder="Card type"
@@ -93,6 +96,7 @@ export const FiltersForm = ({
         <div className="flex gap-2">
           <Select
             className="custom-select"
+            virtual={false}
             allowClear
             mode="multiple"
             placeholder="Expansion Set"
@@ -115,6 +119,7 @@ export const FiltersForm = ({
           ></Select>
           <Select
             className="custom-select"
+            virtual={false}
             allowClear
             mode="multiple"
             placeholder="Card Packs"
@@ -140,6 +145,7 @@ export const FiltersForm = ({
         <>
           <Select
             className="custom-select"
+            virtual={false}
             allowClear
             mode="multiple"
             placeholder="Expansion Set"
@@ -162,6 +168,7 @@ export const FiltersForm = ({
           ></Select>
           <Select
             className="custom-select"
+            virtual={false}
             allowClear
             mode="multiple"
             placeholder="Card Packs"

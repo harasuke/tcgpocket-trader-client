@@ -219,6 +219,7 @@ export const CardDexPage = ({}: CardDexPageProps) => {
         <Select
           className="language-selection !rounded-3xl"
           options={languageOptions}
+          virtual={false}
           onChange={(value) => {
             setCurrentLanguage(value as unknown as CardLanguage);
           }}
