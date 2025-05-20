@@ -18,7 +18,7 @@ body {
 }
 
 .navbar-transition {
-  transition: background-color .3s linear;
+  transition: background-color 0.3s linear;
 }
 
 .navbar-btn {
@@ -39,7 +39,7 @@ body {
 .profile-dropdown {
   li:nth-child(n) {
     /* All li inside a dropdown */
-    @apply px-5 hover:bg-gray-500 py-1
+    @apply px-5 py-1 hover:bg-gray-500;
   }
   li:nth-child(1) {
     /* First li inside a dropdown */
@@ -49,7 +49,7 @@ body {
     /* Last li inside a dropdown */
     @apply mb-5;
   }
-  
+
   li:not(:nth-last-child(1)):nth-child(n) {
     /* All li except the last inside the dropdown */
     /* @apply after:relative after:mt-2 after:mb-2 after:block after:h-[1px] after:w-[100%] after:bg-gray-500; */
@@ -81,12 +81,12 @@ h6 {
   margin-left: 20%;
 }
 
-.friend-code-label{
-  color: rgba(0,0,0,.33);
+.friend-code-label {
+  color: rgba(0, 0, 0, 0.33);
   font-size: small;
   width: 100%;
   align-items: start;
-  @apply pr-3 pl-3 pt-3 pb-2
+  @apply pt-3 pr-3 pb-2 pl-3;
 }
 /* 
 .trade-slider .slick-list {
@@ -114,8 +114,9 @@ h6 {
 /* Hero Section */
 @font-face {
   font-family: "FlexoRegular";
-  src: local("FlexoRegular"),
-   url("/fonts/Flexo-Regular.ttf") format("truetype");
+  src:
+    local("FlexoRegular"),
+    url("/fonts/Flexo-Regular.ttf") format("truetype");
 }
 
 .hero-font {
@@ -156,17 +157,17 @@ h6 {
   height: min-content !important;
 }
 
-.filter-badge .ant-scroll-number.ant-badge-count{
-  top: .5em;
+.filter-badge .ant-scroll-number.ant-badge-count {
+  top: 0.5em;
   right: 1em;
 }
 
 .search-block {
-  transition: all .5s ease-in;
+  transition: all 0.5s ease-in;
 }
 
 .slide-menu {
-  height: calc(100vh - var(--navbar-height))
+  height: calc(100vh - var(--navbar-height));
 }
 /* .slide-menu {
   transition: all .35s ease-in-out;
@@ -184,15 +185,18 @@ h6 {
 
 .all-cards-scrollable {
   /* height: calc(100vh - 12em);  // 8em(navbar) + ~ 3em(searchoptions+padding) */
-  height: calc(100vh - calc(var(--navbar-height) + 3rem))
+  height: calc(100vh - calc(var(--navbar-height) + 3rem));
 }
 
-body:has(.cardex-grid) {
+body:has(.cardex-grid),
+body:has(.hero-page) {
   overflow: hidden !important;
 }
 
 .empty-card-slot {
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+  box-shadow:
+    rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+    rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }
 
 /* @media (min-width: 640px) {
@@ -225,10 +229,13 @@ body:has(.cardex-grid) {
 }
 
 .glow-button {
-  -webkit-box-shadow: inset 0px 0px 0.5em 0px var(--glow-color),
+  -webkit-box-shadow:
+    inset 0px 0px 0.5em 0px var(--glow-color),
     0px 0px 0.5em 0px var(--glow-color);
-  -moz-box-shadow: inset 0px 0px 0.5em 0px var(--glow-color),
+  -moz-box-shadow:
+    inset 0px 0px 0.5em 0px var(--glow-color),
     0px 0px 0.5em 0px var(--glow-color);
-  box-shadow: inset 0px 0px 0.5em 0px var(--glow-color),
+  box-shadow:
+    inset 0px 0px 0.5em 0px var(--glow-color),
     0px 0px 0.5em 0px var(--glow-color);
 }

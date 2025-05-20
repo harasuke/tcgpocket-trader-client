@@ -38,7 +38,7 @@ const HeroSection = () => {
 
   return (
     //aspect-[2/2.8] -translate-y-[-10%]
-    <div className="relative flex h-[95vh] w-full items-center justify-center overflow-hidden bg-black">
+    <div className="hero-page relative flex h-[95vh] w-full items-center justify-center overflow-hidden bg-black">
       <img
         className="absolute z-1 w-full !max-w-none overflow-hidden bg-cover bg-no-repeat"
         style={{
