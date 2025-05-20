@@ -29,8 +29,12 @@ export const Endpoints = {
   POST_CONFIRM_TRADE: () =>
     `/api/trade`,
 
-  POST_CARD_INTENT_LANGUAGE: () =>
+  POST_CARD_INTENT_OFFER_LANGUAGE: () =>
     `/api/user/card/intent/`,
+
+  // TODO: set the URL correctly
+  POST_CARD_INTENT_LANGUAGE: (intent: "offer" | "want") =>
+    intent == "offer" ? `/api/user/card/offer` : `/api/user/card/want`,
 
   SINGLE_CARD_LANGUAGE: (cardId: string) =>
     `/api/user/card/${cardId}`,
@@ -60,6 +64,10 @@ export type EndpointsQueryParams = {
   };
 }
 
+type SingleCard = {
+
+}
+
 export type EndpointsResponseType = {
   CARD_LIST: {
     data: Card[];
@@ -85,4 +93,8 @@ export type EndpointsResponseType = {
     }[],
     meta: Meta;
   }
+
+  SINGLE_CARD: SingleCard,
+
+  SINGLE_CARD_LANGUAGE: SingleCard
 }

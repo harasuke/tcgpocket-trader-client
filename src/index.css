@@ -187,7 +187,7 @@ h6 {
   height: calc(100vh - calc(var(--navbar-height) + 3rem))
 }
 
-body:has(#slideit) {
+body:has(.cardex-grid) {
   overflow: hidden !important;
 }
 

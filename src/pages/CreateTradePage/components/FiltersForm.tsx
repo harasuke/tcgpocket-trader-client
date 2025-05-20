@@ -1,10 +1,11 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Form, Select } from "antd";
 import { Filters } from "../CreateTradePage";
 import { Endpoints } from "src/types/Endpoints";
 import useSearchFiltersOptions from "../hooks/UseSearchFiltersOptions";
 import useDetectDevice from "src/hooks/UseDetectDevice";
 import { CardRarity } from "src/types/CardRarities";
+import "../CreateTradePage.css";
 
 interface FiltersFormProps {
   selectedFilters: Filters;
@@ -17,7 +18,7 @@ export const FiltersForm = ({
   setSelectedFilters,
   overrideRarity,
 }: FiltersFormProps) => {
-  const { screenWidth } = useDetectDevice();
+  const { device, screenWidth } = useDetectDevice();
 
   const { cardElementOptions, cardRarityOptions, expansionOtions, packOptions, typeOptions } =
     useSearchFiltersOptions();
@@ -32,6 +33,7 @@ export const FiltersForm = ({
         allowClear
         mode="multiple"
         placeholder="Card Rarity"
+        showSearch={device == "Desktop" ? true : false}
         options={cardRarityOptions}
         onChange={(changes) => {
           setSelectedFilters({ ...selectedFilters, rarity: changes });
@@ -57,6 +59,7 @@ export const FiltersForm = ({
         allowClear
         mode="multiple"
         placeholder="Energy type"
+        showSearch={device == "Desktop" ? true : false}
         options={cardElementOptions}
         onChange={(changes) => {
           setSelectedFilters({ ...selectedFilters, element: changes });
@@ -82,6 +85,7 @@ export const FiltersForm = ({
         allowClear
         mode="multiple"
         placeholder="Card type"
+        showSearch={device == "Desktop" ? true : false}
         options={typeOptions}
         onChange={(changes) => {
           setSelectedFilters({ ...selectedFilters, type: changes });
@@ -100,6 +104,7 @@ export const FiltersForm = ({
             allowClear
             mode="multiple"
             placeholder="Expansion Set"
+            showSearch={device == "Desktop" ? true : false}
             options={expansionOtions}
             onChange={(changes) => {
               setSelectedFilters({ ...selectedFilters, set: changes });
@@ -123,6 +128,7 @@ export const FiltersForm = ({
             allowClear
             mode="multiple"
             placeholder="Card Packs"
+            showSearch={device == "Desktop" ? true : false}
             options={packOptions}
             onChange={(changes) => {
               setSelectedFilters({ ...selectedFilters, pack: changes });
@@ -149,6 +155,7 @@ export const FiltersForm = ({
             allowClear
             mode="multiple"
             placeholder="Expansion Set"
+            showSearch={device == "Desktop" ? true : false}
             options={expansionOtions}
             onChange={(changes) => {
               setSelectedFilters({ ...selectedFilters, set: changes });
@@ -172,6 +179,7 @@ export const FiltersForm = ({
             allowClear
             mode="multiple"
             placeholder="Card Packs"
+            showSearch={device == "Desktop" ? true : false}
             options={packOptions}
             onChange={(changes) => {
               setSelectedFilters({ ...selectedFilters, pack: changes });

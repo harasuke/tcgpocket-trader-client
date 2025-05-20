@@ -1,11 +1,5 @@
 import { CardRarity } from "../CardRarities";
 
-// export type Card = {
-//   id: string;
-//   name: string;
-//   imageUrl: string;
-// }
-
 export type Card = {
   /** id of the card used on the database */
   id: string;
@@ -14,6 +8,6 @@ export type Card = {
   imageUrl: string;
   name: string;
   rarity: CardRarity;
-  isWanted?: boolean; /* TODO: remove optional */
-  isOffered?: boolean; /* TODO: remove optional */
+  isWanted: boolean;
+  isOffered: boolean;
 }

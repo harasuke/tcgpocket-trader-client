@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Modal, Spin } from "antd";
 import { CardLanguage } from "src/types/CardLanguage";
-import { BsSearchHeart } from "react-icons/bs";
-import { PiHandHeartBold } from "react-icons/pi";
+import { BsSearchHeart, BsSearchHeartFill } from "react-icons/bs";
+import { PiHandHeartBold, PiHandHeartFill } from "react-icons/pi";
 import { Card } from "src/types/api/Card";
 import useSetCardIntentForLanguage from "src/hooks/api/UseSetCardIntentForLanguage";
 import useLanguageIntentCard from "src/hooks/api/UseLanguageIntentCard";
@@ -12,6 +12,7 @@ export default function useLanguageModal() {
   const [isOpen, setIsOpen] = useState(false);
   const cardRef = useRef<Card | null>(null);
 
+  /** Get to init language status */
   const { res, loadingReq } = useLanguageIntentCard(cardRef.current?.id ?? null);
   const { setCardIntentForLanguage } = useSetCardIntentForLanguage();
 
@@ -48,8 +49,7 @@ export default function useLanguageModal() {
             <button
               className="mr-3 cursor-pointer"
               onClick={() =>
-                setCardIntentForLanguage({
-                  intent: "want",
+                setCardIntentForLanguage("want", {
                   cardId: cardRef?.current?.id ?? "",
                   language: e,
                 })
@@ -57,16 +57,16 @@ export default function useLanguageModal() {
             >
               {loadingReq ? (
                 <Spin indicator={<LoadingOutlined spin />} />
+              ) : cardRef.current?.isWanted ? (
+                <BsSearchHeartFill className="text-3xl text-red-600" />
               ) : (
-                // TODO: icon based on status
                 <BsSearchHeart className="text-3xl text-red-600" />
               )}
             </button>
             <button
               className="cursor-pointer"
               onClick={() =>
-                setCardIntentForLanguage({
-                  intent: "offer",
+                setCardIntentForLanguage("offer", {
                   cardId: cardRef?.current?.id ?? "",
                   language: e,
                 })
@@ -74,8 +74,9 @@ export default function useLanguageModal() {
             >
               {loadingReq ? (
                 <Spin indicator={<LoadingOutlined spin />} />
+              ) : cardRef?.current?.isOffered ? (
+                <PiHandHeartFill className="text-3xl text-red-600" />
               ) : (
-                // TODO: icon based on status
                 <PiHandHeartBold className="text-3xl text-blue-600" />
               )}
             </button>

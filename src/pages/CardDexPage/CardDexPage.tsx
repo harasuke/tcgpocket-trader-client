@@ -1,13 +1,9 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import useDetectDevice from "src/hooks/UseDetectDevice";
-import { useNavigate } from "react-router";
-import { Badge, Button, Input, InputRef, message, Select } from "antd";
+import { Badge, Button, Input, message, Select } from "antd";
 import useDebounceInput from "src/hooks/UseDebounceInput";
 import useStateRef from "react-usestateref";
 import { Card } from "src/types/api/Card";
-import { EndpointsResponseType } from "src/types/Endpoints";
-import { Filters } from "../CreateTradePage/CreateTradePage";
-import useConfirmTrade from "src/hooks/api/UseConfirmTrade";
 import useSetSearchFilters from "src/hooks/api/UseSetSearchFilters";
 import useFilterModal from "../CreateTradePage/hooks/UseFilterModal";
 import { CardDexList } from "./components/CardDexList";
@@ -18,17 +14,18 @@ import useStoreFilters from "./hooks/UseStoreFilters";
 import { CardLanguage } from "src/types/CardLanguage";
 import "./CardDexPage.css";
 import useLanguageModal from "./hooks/UseLanguageModal";
+import useLanguageSelect from "src/hooks/useLanguageSelect";
+import useZoomCardModal from "./hooks/UseZoomCardModal";
 
 interface CardDexPageProps {}
 
 export const CardDexPage = ({}: CardDexPageProps) => {
-  const navigate = useNavigate();
   const storeContext = useContext(StoreContext);
   const [messageApi, contextHolder] = message.useMessage();
 
   const { device, screenWidth } = useDetectDevice();
 
-  const [blockSubmitTrade, setBlockSubmitTrade] = useState(false);
+  const [isLangSelOpen, setLangSelOpen] = useState(false);
 
   /* Used for Pagination */
   const [cardsPerPage, setCardsPerPage] = useState(30);
@@ -42,28 +39,12 @@ export const CardDexPage = ({}: CardDexPageProps) => {
   const [currentLanguage, setCurrentLanguage] = useState<CardLanguage>(
     storeContext?.cardDexLanguage ?? CardLanguage.IT,
   );
-  const languageOptions = Object.values(CardLanguage).map((e) => ({
-    value: e,
-    label: (
-      <span className="hero-font mr-[3ch] flex w-[4ch] items-center">
-        <img className="align-self-center mr-1 !h-[2rem]" src={`/lang-flags/${e}.svg`} />
-        {e.toUpperCase()}
-      </span>
-    ),
-  }));
 
   const [offeredCards, setOfferedCards, offeredCardsRef] = useStateRef<Card[]>([]);
   const [wantedCard, setWantedCard, wantedCardRef] = useStateRef<Card | null>(null);
 
-  // const [currentResponse, setCurrentResponse] = useState<EndpointsResponseType["CARD_LIST"] | null>(
-  //   null,
-  // );
-
   const { selectedFilters, setSelectedFilters, filters, setFilters, filtersAmount } =
     useStoreFilters();
-
-  /** Post request to submit trade infos */
-  const { confirmTrade } = useConfirmTrade(messageApi, setBlockSubmitTrade);
 
   /* Call API to get all visible cards */
   const {
@@ -81,12 +62,22 @@ export const CardDexPage = ({}: CardDexPageProps) => {
   });
 
   const {
+    isOpen: isOpen_cardZoomModal,
+    setIsOpenForCard: setIsOpenForCard_cardZoomModal,
+    ModalComponent: ModalComponent_cardZoom,
+  } = useZoomCardModal();
+
+  const {
     isOpen: isOpen_languageModal,
     setIsOpenForCard: setIsOpenForCard_languageModal,
     ModalComponent: ModalComponent_language,
   } = useLanguageModal();
 
-  const { isOpen, setIsOpen, ModalComponent } = useFilterModal(
+  const {
+    isOpen,
+    setIsOpen,
+    ModalComponent: ModalComponent_filters,
+  } = useFilterModal(
     setFilters,
     selectedFilters,
     setSelectedFilters,
@@ -202,9 +193,15 @@ export const CardDexPage = ({}: CardDexPageProps) => {
   return (
     <>
       {contextHolder}
-      {ModalComponent}
+      {ModalComponent_filters}
       {ModalComponent_language}
-      <div className="mx-3 mt-2 flex h-[2rem]">
+      {ModalComponent_cardZoom}
+      <div
+        className="mx-3 mt-2 flex h-[2rem]"
+        // style={{
+        //   top: "calc(var(--navbar-height) + calc(var(--spacing) * 2)",
+        // }}
+      >
         <Input
           value={searchByName ?? ""}
           className="placeholder:hero-font !rounded-3xl focus:border-red-500"
@@ -230,16 +227,41 @@ export const CardDexPage = ({}: CardDexPageProps) => {
         <Badge count={filtersAmount} className="filter-badge" color={storeContext?.navbarColor}>
           <Button className="hero-font mx-2 !rounded-3xl outline-1" onClick={() => setIsOpen(true)}>
             <FilterIcon />
-            Filters
+            {screenWidth > 684 && <span>Filters</span>}
           </Button>
         </Badge>
         <Select
           className="language-selection !rounded-3xl"
-          options={languageOptions}
           virtual={false}
+          onDropdownVisibleChange={setLangSelOpen}
           onChange={(value) => {
+            setCurrentPage(1);
             setCurrentLanguage(value as unknown as CardLanguage);
           }}
+          value={{
+            value: currentLanguage,
+            label: (
+              <span
+                className={`flex items-center transition-all duration-500 ${isLangSelOpen || screenWidth > 684 ? "hero-font mr-[2ch] w-[5ch]" : "w-[3ch]"}`}
+              >
+                <img
+                  className="mr-1 h-[2rem]"
+                  src={`/lang-flags/${currentLanguage}.svg`}
+                  alt={currentLanguage}
+                />
+                {isLangSelOpen || screenWidth > 684 ? currentLanguage.toUpperCase() : ""}
+              </span>
+            ),
+          }}
+          options={Object.values(CardLanguage).map((e) => ({
+            value: e,
+            label: (
+              <span className="hero-font mr-[3ch] flex w-[4ch] items-center">
+                <img className="align-self-center mr-1 !h-[2rem]" src={`/lang-flags/${e}.svg`} />
+                {e.toUpperCase()}
+              </span>
+            ),
+          }))}
           defaultValue={{
             value: currentLanguage,
             label: (
@@ -260,6 +282,7 @@ export const CardDexPage = ({}: CardDexPageProps) => {
         loadingAPICall={loadingReq}
         cardsPerPage={cardsPerPage}
         openLanguageModalForCard={setIsOpenForCard_languageModal}
+        openCardZoomModalForCard={setIsOpenForCard_cardZoomModal}
         inputOnChange={function (): void {
           throw new Error("Function not implemented.");
         }}
