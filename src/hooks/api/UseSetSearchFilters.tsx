@@ -8,14 +8,13 @@ interface PageOrderType {
 }
 
 export default function useSetSearchFilters(
-  queryParams: EndpointsQueryParams["CARD_LIST"],
-  resetResponse: boolean = true,
+  queryParams: EndpointsQueryParams["CARD_LIST"]
 ): {
   res: EndpointsResponseType["CARD_LIST"] | null;
   loadingReq: boolean;
   setRes: React.Dispatch<React.SetStateAction<EndpointsResponseType["CARD_LIST"] | null>>;
 } {
-  const { res: _res, loadingReq } = useGetAPI(Endpoints.CARD_LIST(), queryParams, resetResponse);
+  const { res: _res, loadingReq } = useGetAPI(Endpoints.CARD_LIST(), queryParams);
   const [res, setRes] = useState<EndpointsResponseType["CARD_LIST"] | null>(null);
   const [pageOrder, setPageOrder] = useState<PageOrderType[]>([]);
 

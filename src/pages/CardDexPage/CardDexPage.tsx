@@ -5,7 +5,7 @@ import useDebounceInput from "src/hooks/UseDebounceInput";
 import useStateRef from "react-usestateref";
 import { Card } from "src/types/api/Card";
 import useSetSearchFilters from "src/hooks/api/UseSetSearchFilters";
-import useFilterModal from "../CreateTradePage/hooks/UseFilterModal";
+import useFilterModal from "./hooks/UseFilterModal";
 import { CardDexList } from "./components/CardDexList";
 import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
 import { StoreContext } from "src/stores/StoreContext";

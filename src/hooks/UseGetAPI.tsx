@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 
-export default function useGetAPI(url: string, queryParams: Object | undefined = undefined, resetResponse: boolean = true) {
+export default function useGetAPI(url: string, queryParams: Object | undefined = undefined) {
   const { getToken, isLoaded } = useAuth();
   const [res, setRes] = useState<any>([]);
   const [loadingReq, setLoadingReq] = useState(true);

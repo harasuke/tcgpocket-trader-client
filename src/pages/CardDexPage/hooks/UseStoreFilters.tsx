@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Filters } from "src/pages/CreateTradePage/CreateTradePage";
+import { Filters } from "../components/FiltersForm";
 
 export default function useStoreFilters() {
   // Filters to be stored but not to apply

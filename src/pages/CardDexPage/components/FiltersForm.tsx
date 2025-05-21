@@ -1,11 +1,22 @@
 import React from "react";
 import { Form, Select } from "antd";
-import { Filters } from "../CreateTradePage";
 import { Endpoints } from "src/types/Endpoints";
 import useSearchFiltersOptions from "../hooks/UseSearchFiltersOptions";
 import useDetectDevice from "src/hooks/UseDetectDevice";
 import { CardRarity } from "src/types/CardRarities";
-import "../CreateTradePage.css";
+import "../CardDexPage.css";
+import { CardElement } from "src/types/CardElement";
+import { CardType } from "src/types/CardType";
+import { CardSet } from "src/types/CardSet";
+import { CardPack } from "src/types/CardPack";
+
+export interface Filters {
+  rarity: CardRarity[];
+  element: CardElement[];
+  type: CardType[];
+  set: CardSet[];
+  pack: CardPack[];
+}
 
 interface FiltersFormProps {
   selectedFilters: Filters;

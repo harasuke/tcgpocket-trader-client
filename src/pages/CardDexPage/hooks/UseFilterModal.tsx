@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
-import { FiltersForm } from "../components/FiltersForm";
-import { Filters } from "../CreateTradePage";
+import { Filters, FiltersForm } from "../components/FiltersForm";
 import { CardRarity } from "src/types/CardRarities";
 
 export default function useFilterModal(

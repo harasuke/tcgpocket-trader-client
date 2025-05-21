@@ -4,7 +4,6 @@ import { ScrollHandler } from "src/components/ScrollHandler";
 import { EndpointsResponseType } from "src/types/Endpoints";
 import { Card as responseCard } from "src/types/api/Card";
 import { CardexCard } from "src/components/CardexCard/CardexCard";
-import useStateRef from "react-usestateref";
 
 interface CardDexListProps {
   cardsAPIResponse: EndpointsResponseType["CARD_LIST"] | null;
@@ -31,7 +30,6 @@ export const CardDexList = ({
 }: CardDexListProps) => {
   const scrollableContent = useRef<HTMLDivElement | null>(null);
 
-  const [scrollQueue, setScrollQueue, scrollQueueRef] = useStateRef(0);
   const [refreshOnScroll, setRefreshOnScroll] = useState(false);
 
   useEffect(() => {
