@@ -51,7 +51,7 @@ export default function useLanguageModal() {
               onClick={() =>
                 setCardIntentForLanguage("want", {
                   cardId: cardRef?.current?.id ?? "",
-                  language: e,
+                  languageCode: e,
                 })
               }
             >
@@ -68,14 +68,14 @@ export default function useLanguageModal() {
               onClick={() =>
                 setCardIntentForLanguage("offer", {
                   cardId: cardRef?.current?.id ?? "",
-                  language: e,
+                  languageCode: e,
                 })
               }
             >
               {loadingReq ? (
                 <Spin indicator={<LoadingOutlined spin />} />
               ) : cardRef?.current?.isOffered ? (
-                <PiHandHeartFill className="text-3xl text-red-600" />
+                <PiHandHeartFill className="text-3xl text-blue-600" />
               ) : (
                 <PiHandHeartBold className="text-3xl text-blue-600" />
               )}

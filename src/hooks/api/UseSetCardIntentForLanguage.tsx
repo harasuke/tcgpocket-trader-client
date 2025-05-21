@@ -10,12 +10,12 @@ export default function useSetCardIntentForLanguage() {
     intent: "offer" | "want",
     bodyObj: {
       cardId: string;
-      language: CardLanguage;
+      languageCode: CardLanguage;
     },
   ) => {
     return _postRequest(Endpoints.POST_CARD_INTENT_LANGUAGE(intent), {
       ...bodyObj,
-      language: String(bodyObj.language).toLowerCase(),
+      language: String(bodyObj.languageCode).toLowerCase(),
     });
   };
 

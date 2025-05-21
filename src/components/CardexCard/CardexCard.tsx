@@ -22,6 +22,8 @@ export const CardexCard = ({
   openLanguageModalForCard,
 }: CardexCardProps) => {
   const [loaded, setLoaded] = useState(false);
+  const [isOffered, setIsOffered] = useState(card.isOffered);
+  const [isWanted, setIsWanted] = useState(card.isWanted);
 
   const { setCardIntentForLanguage } = useSetCardIntentForLanguage();
 
@@ -111,10 +113,15 @@ export const CardexCard = ({
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            setCardIntentForLanguage("offer", { cardId: card.id, language: language });
+            setCardIntentForLanguage("want", { cardId: card.id, languageCode: language }).then(
+              (res) => {
+                if (res.moved) setIsOffered((prev) => !prev);
+                setIsWanted((prev) => !prev);
+              },
+            );
           }}
         >
-          {card.isWanted ? (
+          {isWanted ? (
             <BsSearchHeartFill className="text-3xl text-red-600" />
           ) : (
             <BsSearchHeart className="text-3xl text-red-600" />
@@ -125,11 +132,16 @@ export const CardexCard = ({
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            setCardIntentForLanguage("want", { cardId: card.id, language: language });
+            setCardIntentForLanguage("offer", { cardId: card.id, languageCode: language }).then(
+              (res) => {
+                if (res.moved) setIsWanted((prev) => !prev);
+                setIsOffered((prev) => !prev);
+              },
+            );
           }}
         >
-          {card.isOffered ? (
-            <PiHandHeartFill className="text-3xl text-red-600" />
+          {isOffered ? (
+            <PiHandHeartFill className="text-3xl text-blue-600" />
           ) : (
             <PiHandHeartBold className="text-3xl text-blue-600" />
           )}

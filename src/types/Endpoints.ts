@@ -34,7 +34,7 @@ export const Endpoints = {
 
   // TODO: set the URL correctly
   POST_CARD_INTENT_LANGUAGE: (intent: "offer" | "want") =>
-    intent == "offer" ? `/api/user/card/offer` : `/api/user/card/want`,
+    intent == "offer" ? `/api/user/offered` : `/api/user/wanted`,
 
   SINGLE_CARD_LANGUAGE: (cardId: string) =>
     `/api/user/card/${cardId}`,

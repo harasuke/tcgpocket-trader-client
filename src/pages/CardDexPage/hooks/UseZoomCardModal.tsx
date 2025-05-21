@@ -84,7 +84,7 @@ export default function useZoomCardModal() {
                         onClick={() =>
                           setCardIntentForLanguage("want", {
                             cardId: cardRef?.current?.id ?? "",
-                            language: lang,
+                            languageCode: lang,
                           })
                         }
                       />
@@ -98,7 +98,7 @@ export default function useZoomCardModal() {
                         onClick={() =>
                           setCardIntentForLanguage("offer", {
                             cardId: cardRef?.current?.id ?? "",
-                            language: lang,
+                            languageCode: lang,
                           })
                         }
                       />
