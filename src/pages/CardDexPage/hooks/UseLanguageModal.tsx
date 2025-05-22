@@ -38,7 +38,59 @@ export default function useLanguageModal() {
       footer={[]}
     >
       <>
-        {Object.values(CardLanguage).map((e) => (
+        {!loadingReq && res.length ? (
+          <>
+            {res.map((e) => (
+              <div className="my-3 flex items-center justify-center">
+                <img
+                  className="mr-2 h-[3ch]"
+                  src={`/lang-flags/${String(e).toLowerCase()}.svg`}
+                  alt={`${e.languageCode} Flag`}
+                />
+                <span className="hero-font mr-6 w-[3ch] text-xl">{e.languageCode.toUpperCase()}</span>
+                {e.isWanted}
+                {e.isOffered}
+                <button
+                  className="mr-3 cursor-pointer"
+                  onClick={() =>
+                    setCardIntentForLanguage("want", {
+                      cardId: cardRef?.current?.id ?? "",
+                      languageCode: e.languageCode,
+                    })
+                  }
+                >
+                  {loadingReq ? (
+                    <Spin indicator={<LoadingOutlined spin />} />
+                  ) : e.isWanted ? (
+                    <BsSearchHeartFill className="text-3xl text-red-600" />
+                  ) : (
+                    <BsSearchHeart className="text-3xl text-red-600" />
+                  )}
+                </button>
+                <button
+                  className="cursor-pointer"
+                  onClick={() =>
+                    setCardIntentForLanguage("offer", {
+                      cardId: cardRef?.current?.id ?? "",
+                      languageCode: e.languageCode,
+                    })
+                  }
+                >
+                  {loadingReq ? (
+                    <Spin indicator={<LoadingOutlined spin />} />
+                  ) : e.isOffered ? (
+                    <PiHandHeartFill className="text-3xl text-blue-600" />
+                  ) : (
+                    <PiHandHeartBold className="text-3xl text-blue-600" />
+                  )}
+                </button>
+              </div>
+            ))}
+          </>
+        ) : (
+          <></>
+        )}
+        {/* {Object.values(CardLanguage).map((e) => (
           <div className="my-3 flex items-center justify-center">
             <img
               className="mr-2 h-[3ch]"
@@ -81,7 +133,7 @@ export default function useLanguageModal() {
               )}
             </button>
           </div>
-        ))}
+        ))} */}
       </>
     </Modal>
   );

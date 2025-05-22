@@ -5,6 +5,7 @@ import { Meta } from "src/types/api/Meta";
 import { CardSet } from "./CardSet";
 import { CardType } from "./CardType";
 import { CardElement } from "./CardElement";
+import { CardLanguage } from "./CardLanguage";
 
 export const Endpoints = {
 
@@ -37,7 +38,7 @@ export const Endpoints = {
     intent == "offer" ? `/api/user/offered` : `/api/user/wanted`,
 
   SINGLE_CARD_LANGUAGE: (cardId: string) =>
-    `/api/user/card/${cardId}`,
+    `/api/card/languages/${cardId}`,
 
   PERFECT_TRADES: () =>
     `/api/user/matched-trades/list`,
@@ -68,7 +69,14 @@ type SingleCard = {
 
 }
 
+export type GivenLanguageCard = {
+  languageCode: CardLanguage,
+  isWanted: boolean,
+  isOffered: boolean
+}
+
 export type EndpointsResponseType = {
+
   CARD_LIST: {
     data: Card[];
     meta: Meta;
@@ -96,5 +104,5 @@ export type EndpointsResponseType = {
 
   SINGLE_CARD: SingleCard,
 
-  SINGLE_CARD_LANGUAGE: SingleCard
+  SINGLE_CARD_LANGUAGE: GivenLanguageCard[]
 }
