@@ -18,7 +18,7 @@ export default function RegisterPage({}: RegisterPageProps) {
   const [errors, setErrors] = useState<ClerkAPIError[]>();
   const email = useRef<any>(null);
   const password = useRef<any>(null);
-  let friendCode: string = "";
+  const [friendCode, setFriendCode] = useState("");
 
   if (!isLoaded) return;
 
@@ -80,7 +80,7 @@ export default function RegisterPage({}: RegisterPageProps) {
             ></img>
             <InputEmail className="w-full p-3" errors={errors} ref={email} />
             <InputPassword className="w-full p-3" errors={errors} ref={password} />
-            <InputFriendcode onCodeChange={(code) => (friendCode = code)} />
+            <InputFriendcode onCodeChange={(code) => setFriendCode(code)} />
             <Button type="primary" className="m-3 max-w-[50%]" onClick={(e) => register(e)}>
               Register
             </Button>

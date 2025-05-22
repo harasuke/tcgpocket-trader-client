@@ -10,7 +10,7 @@ import { BsSearchHeart } from "react-icons/bs";
 import { PiHandHeartBold } from "react-icons/pi";
 import TabPane from "antd/es/tabs/TabPane";
 import { Endpoints } from "src/types/Endpoints";
-import { AvailableCardList } from "src/components/AvailableCardList/AvailableCardList";
+import { WantedCardList } from "src/components/WantedCardList/WantedCardList";
 import useDebounceInput from "src/hooks/UseDebounceInput";
 import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
 
@@ -67,11 +67,11 @@ function TradesPage() {
                 }}
               >
                 <Icon className="mr-1" />
-                {i === 0 ? "Tradable" : "Might interest"}
+                {i === 0 ? "What people wants" : "What people offers"}
                 {/* {i === 0 ? "Check what people are searching for" : "Check what people are offering"} */}
               </span>
             ),
-            children: i === 0 ? <AvailableCardList /> : "Offer content here",
+            children: i === 0 ? <WantedCardList /> : "Offer content here",
           };
           //   const id = String(i + 1);
           //   return {

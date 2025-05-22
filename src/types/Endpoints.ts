@@ -33,7 +33,6 @@ export const Endpoints = {
   POST_CARD_INTENT_OFFER_LANGUAGE: () =>
     `/api/user/card/intent/`,
 
-  // TODO: set the URL correctly
   POST_CARD_INTENT_LANGUAGE: (intent: "offer" | "want") =>
     intent == "offer" ? `/api/user/offered` : `/api/user/wanted`,
 
@@ -45,6 +44,9 @@ export const Endpoints = {
 
   MATCHED_TRADES: () =>
     `/api/user/recommendations/list`,
+
+  ALL_WANTED_CARDS: () =>
+    `/api/trade/wanted`,
 
   USER: () =>
     `/api/user/data`,
@@ -101,6 +103,13 @@ export type EndpointsResponseType = {
     }[],
     meta: Meta;
   }
+
+  ALL_WANTED_CARDS: {
+    id: string;
+    baseCardId: string;
+    languageCode: string;
+    imageUrl: string;
+  }[]
 
   SINGLE_CARD: SingleCard,
 
