@@ -1,21 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import useDetectDevice from "src/hooks/UseDetectDevice";
-import { Badge, Button, Input, message, Select } from "antd";
 import useDebounceInput from "src/hooks/UseDebounceInput";
-import useStateRef from "react-usestateref";
-import { Card } from "src/types/api/Card";
 import useSetSearchFilters from "src/hooks/api/UseSetSearchFilters";
 import useFilterModal from "./hooks/UseFilterModal";
-import { CardDexList } from "./components/CardDexList";
-import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
-import { StoreContext } from "src/stores/StoreContext";
-import { FilterIcon } from "src/assets/FilterIcon";
 import useStoreFilters from "./hooks/UseStoreFilters";
-import { CardLanguage } from "src/types/CardLanguage";
-import "./CardDexPage.css";
-import useLanguageModal from "./hooks/UseLanguageModal";
-import useLanguageSelect from "src/hooks/useLanguageSelect";
 import useZoomCardModal from "./hooks/UseZoomCardModal";
+import { ChangeLanguageIntentResponse } from "src/hooks/api/UseSetCardIntentForLanguage";
+import { StoreContext } from "src/stores/StoreContext";
+import { Badge, Button, Input, message, Select } from "antd";
+import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
+import { FilterIcon } from "src/assets/FilterIcon";
+import { Card } from "src/types/api/Card";
+import { CardLanguage } from "src/types/CardLanguage";
+import { CardDexList } from "./components/CardDexList";
+import "./CardDexPage.css";
 
 interface CardDexPageProps {}
 
@@ -40,9 +38,6 @@ export const CardDexPage = ({}: CardDexPageProps) => {
     storeContext?.cardDexLanguage ?? CardLanguage.IT,
   );
 
-  const [offeredCards, setOfferedCards, offeredCardsRef] = useStateRef<Card[]>([]);
-  const [wantedCard, setWantedCard, wantedCardRef] = useStateRef<Card | null>(null);
-
   const { selectedFilters, setSelectedFilters, filters, setFilters, filtersAmount } =
     useStoreFilters();
 
@@ -53,37 +48,54 @@ export const CardDexPage = ({}: CardDexPageProps) => {
     setRes: setCurrentResponse,
   } = useSetSearchFilters({
     ...filters,
-    ...(wantedCard != null ? { rarity: [wantedCard.rarity] } : {}),
-    ...(offeredCards.length ? { rarity: [offeredCards[0]?.rarity] } : {}),
     ...(debouncedInput != null ? { name: debouncedInput } : {}),
     languageCode: currentLanguage.toString(),
     limit: cardsPerPage.toString(),
     page: currentPage.toString(),
   });
 
+  // Modifies underlying currentResponse object to change the intent of the card
+  const mutateResponseOnCardChange = (
+    card: Card,
+    language: CardLanguage,
+    intentResponse: ChangeLanguageIntentResponse,
+  ) => {
+    if (currentLanguage != language) return;
+    setCurrentResponse((prev) => {
+      if (!prev) return prev;
+
+      const newData = prev?.data?.map((c) => {
+        if (c.id != card.id) return c;
+        const cardToChange = { ...c };
+
+        if (intentResponse.moved) {
+          cardToChange.isWanted = !cardToChange.isWanted;
+          cardToChange.isOffered = !cardToChange.isOffered;
+        } else if (intentResponse.added) {
+          if (intentResponse.to === "wanted") cardToChange.isWanted = true;
+          if (intentResponse.to === "offered") cardToChange.isOffered = true;
+        } else if (intentResponse.removed) {
+          if (intentResponse.from === "wanted") cardToChange.isWanted = false;
+          if (intentResponse.from === "offered") cardToChange.isOffered = false;
+        }
+
+        return cardToChange;
+      });
+      return { ...prev, data: newData };
+    });
+  };
+
   const {
     isOpen: isOpen_cardZoomModal,
     setIsOpenForCard: setIsOpenForCard_cardZoomModal,
     ModalComponent: ModalComponent_cardZoom,
-  } = useZoomCardModal();
-
-  const {
-    isOpen: isOpen_languageModal,
-    setIsOpenForCard: setIsOpenForCard_languageModal,
-    ModalComponent: ModalComponent_language,
-  } = useLanguageModal();
+  } = useZoomCardModal(mutateResponseOnCardChange);
 
   const {
     isOpen,
     setIsOpen,
     ModalComponent: ModalComponent_filters,
-  } = useFilterModal(
-    setFilters,
-    selectedFilters,
-    setSelectedFilters,
-    setCurrentPage,
-    wantedCard?.rarity ?? offeredCards[0]?.rarity ?? undefined,
-  );
+  } = useFilterModal(setFilters, selectedFilters, setSelectedFilters, setCurrentPage);
 
   useEffect(() => {
     if (loadingReq) {
@@ -98,110 +110,12 @@ export const CardDexPage = ({}: CardDexPageProps) => {
     }
   }, [loadingReq]);
 
-  const resetCardLogic = (type: any, card: any) => {
-    /**
-     * When this function gets called, offeredCards and wantedCard have the value of the previous state.
-     * CurrentResponse has to be resetted only if after the current card click, there will be no other cards selected or there will be only 1 card select.
-     * This must be done because the first card selected determines a card filter based by rarity.
-     * Trades can only be made between cards by the same rarity.
-     *
-     * If by clicking the card is not the only card or it's not the last, I have to always keep the current api call result and always append new cards in case of a user scrolls to the bottom.
-     */
-    if (
-      type == "offers" &&
-      wantedCard == null &&
-      (!offeredCards.length || (offeredCards.length == 1 && offeredCards[0].id == card.id))
-    ) {
-      setCurrentResponse(null);
-    } else if (
-      type == "wants" &&
-      offeredCards.length <= 0 &&
-      (wantedCard == null || wantedCard.id == card.id)
-    ) {
-      setCurrentResponse(null);
-    }
-    setCurrentPage(1);
-  };
-
-  const onCardSelection = (type: "wants" | "offers", card: Card, toRemove: boolean = false) => {
-    resetCardLogic(type, card);
-
-    switch (type) {
-      case "wants": {
-        // if (wantedCardRef.current == null && offeredCardsRef.current.length && offeredCardsRef.current.some((c) => c.id == card.id))
-        //   break;
-        if (offeredCardsRef.current.some((c) => c.id === card.id)) break;
-
-        if (wantedCardRef.current == null) {
-          setWantedCard(card);
-          break;
-        }
-
-        if (wantedCardRef.current.id == card.id) {
-          setWantedCard(null);
-          break;
-        }
-        // if (device != "Desktop" && wantedCardRef.current.id == card.id) {
-        //   setWantedCard(null);
-        //   break;
-        // }
-
-        // if (toRemove && device === "Desktop") {
-        //   setWantedCard(null);
-        //   break;
-        // }
-
-        if (wantedCardRef.current.id != card.id) {
-          setWantedCard(card);
-          break;
-        }
-
-        break;
-      }
-
-      case "offers": {
-        if (wantedCardRef.current != null && card.id == wantedCardRef.current.id) break;
-
-        setOfferedCards((currentOffered) => {
-          const alreadyExists = currentOffered.some((_c) => _c.id === card.id);
-
-          if (alreadyExists) {
-            // if (toRemove && device === "Desktop")
-            //   return currentOffered.filter((_c) => _c.id !== card.id);
-
-            // if (device !== "Desktop") return currentOffered.filter((_c) => _c.id !== card.id);
-
-            return currentOffered;
-          }
-
-          // Se stai provando ad aggiungere
-          if (currentOffered.length < 5) {
-            const sameRarity = currentOffered.every((c) => c.rarity === card.rarity);
-            if (sameRarity || currentOffered.length === 0) {
-              return [...currentOffered, card];
-            }
-          }
-
-          return currentOffered;
-        });
-
-        break;
-      }
-    }
-  };
-
   return (
     <>
       {contextHolder}
       {ModalComponent_filters}
-      {ModalComponent_language}
       {ModalComponent_cardZoom}
-      <div
-        className="mx-3 mt-2 flex h-[2rem]"
-        // style={{
-        //   top: "calc(var(--navbar-height) + calc(var(--spacing) * 2)",
-        // }}
-      >
+      <div className="mx-3 mt-2 flex h-[2rem]">
         <Input
           value={searchByName ?? ""}
           className="placeholder:hero-font !rounded-3xl focus:border-red-500"
@@ -281,21 +195,11 @@ export const CardDexPage = ({}: CardDexPageProps) => {
         cardsAPIResponse={currentResponse}
         loadingAPICall={loadingReq}
         cardsPerPage={cardsPerPage}
-        openLanguageModalForCard={setIsOpenForCard_languageModal}
         openCardZoomModalForCard={setIsOpenForCard_cardZoomModal}
-        inputOnChange={function (): void {
-          throw new Error("Function not implemented.");
-        }}
+        onIntentCardChange={mutateResponseOnCardChange}
         loadMoreCards={() => {
           setCurrentPage((prev) => prev + 1);
         }}
-        onCardSelection={function (type: "wants" | "offers", card: Card): void {
-          throw new Error("Function not implemented.");
-        }}
-        onConfirmTrade={function (): void {
-          throw new Error("Function not implemented.");
-        }}
-        blockSubmitTrade={false}
       />
     </>
   );

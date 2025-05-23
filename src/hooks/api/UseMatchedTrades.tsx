@@ -2,8 +2,10 @@ import React from "react";
 import useGetAPI from "../UseGetAPI";
 import { Endpoints, EndpointsResponseType } from "src/types/Endpoints";
 
+export type MatchedTradesResponse = EndpointsResponseType["MATCHED_TRADES"]
+
 export default function useMatchedTrades(): {
-  res: EndpointsResponseType["MATCHED_TRADES"];
+  res: MatchedTradesResponse;
   loadingReq: boolean;
 } {
   const { res, loadingReq } = useGetAPI(Endpoints.MATCHED_TRADES());

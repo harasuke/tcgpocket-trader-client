@@ -1,22 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import SkeletonCard from "src/components/SkeletonCard/SkeletonCard";
 import { ScrollHandler } from "src/components/ScrollHandler";
-import { EndpointsResponseType } from "src/types/Endpoints";
-import { Card as responseCard } from "src/types/api/Card";
+import { Card } from "src/types/api/Card";
 import { CardexCard } from "src/components/CardexCard/CardexCard";
+import { CardListResponse } from "src/hooks/api/UseSetSearchFilters";
+import { CardLanguage } from "src/types/CardLanguage";
+import { ChangeLanguageIntentResponse } from "src/hooks/api/UseSetCardIntentForLanguage";
 
 interface CardDexListProps {
-  cardsAPIResponse: EndpointsResponseType["CARD_LIST"] | null;
+  cardsAPIResponse: CardListResponse | null;
   loadingAPICall: boolean;
   cardsPerPage: number;
-  inputOnChange: () => void;
   loadMoreCards: () => void;
-  onCardSelection: (type: "wants" | "offers", card: responseCard) => void;
-  onConfirmTrade: () => void;
-  blockSubmitTrade: boolean;
   currentLanguage: any;
-  openLanguageModalForCard: any;
   openCardZoomModalForCard: any;
+  onIntentCardChange: (card: Card, language: CardLanguage, res: ChangeLanguageIntentResponse) => void;
 }
 
 export const CardDexList = ({
@@ -25,8 +23,8 @@ export const CardDexList = ({
   loadMoreCards,
   cardsPerPage,
   currentLanguage,
-  openLanguageModalForCard,
   openCardZoomModalForCard,
+  onIntentCardChange
 }: CardDexListProps) => {
   const scrollableContent = useRef<HTMLDivElement | null>(null);
 
@@ -68,8 +66,9 @@ export const CardDexList = ({
                   <CardexCard
                     className={`${c.id} h-auto max-h-full`}
                     card={c}
+                    key={c.id}
                     language={currentLanguage}
-                    openLanguageModalForCard={openLanguageModalForCard}
+                    onIntentCardChange={onIntentCardChange}
                   />
                 </div>
               ))}

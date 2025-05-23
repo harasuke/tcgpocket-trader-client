@@ -114,4 +114,34 @@ export type EndpointsResponseType = {
   SINGLE_CARD: SingleCard,
 
   SINGLE_CARD_LANGUAGE: GivenLanguageCard[]
+
+  POST_CARD_INTENT_LANGUAGE: POST_CARD_INTENT_LANGUAGE_MOVED | POST_CARD_INTENT_LANGUAGE_ADDED | POST_CARD_INTENT_LANGUAGE_REMOVED
 }
+
+
+type BASE_POST_CARD_INTENT_LANGUAGE = {
+  success: boolean;
+}
+type POST_CARD_INTENT_LANGUAGE_MOVED = BASE_POST_CARD_INTENT_LANGUAGE & {
+  moved: true;
+  from: "wanted" | "offered";
+  to: "offered" | "wanted";
+  added?: never;
+  removed?: never;
+};
+
+type POST_CARD_INTENT_LANGUAGE_ADDED = BASE_POST_CARD_INTENT_LANGUAGE & {
+  added: true;
+  to: "wanted" | "offered"
+  from?: never;
+  moved?: never;
+  removed?: never;
+};
+
+type POST_CARD_INTENT_LANGUAGE_REMOVED = BASE_POST_CARD_INTENT_LANGUAGE & {
+  removed: true;
+  from: "wanted" | "offered";
+  to?: never;
+  moved?: never;
+  added?: never;
+};

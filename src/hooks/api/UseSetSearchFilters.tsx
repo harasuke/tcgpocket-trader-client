@@ -2,20 +2,22 @@ import { useEffect, useState } from "react";
 import useGetAPI from "../UseGetAPI";
 import { Endpoints, EndpointsQueryParams, EndpointsResponseType } from "src/types/Endpoints";
 
+export type CardListResponse = EndpointsResponseType["CARD_LIST"];
+
 interface PageOrderType {
   page: string;
-  res?: EndpointsResponseType["CARD_LIST"];
+  res?: CardListResponse;
 }
 
 export default function useSetSearchFilters(
   queryParams: EndpointsQueryParams["CARD_LIST"]
 ): {
-  res: EndpointsResponseType["CARD_LIST"] | null;
+  res: CardListResponse | null;
   loadingReq: boolean;
-  setRes: React.Dispatch<React.SetStateAction<EndpointsResponseType["CARD_LIST"] | null>>;
+  setRes: React.Dispatch<React.SetStateAction<CardListResponse | null>>;
 } {
   const { res: _res, loadingReq } = useGetAPI(Endpoints.CARD_LIST(), queryParams);
-  const [res, setRes] = useState<EndpointsResponseType["CARD_LIST"] | null>(null);
+  const [res, setRes] = useState<CardListResponse | null>(null);
   const [pageOrder, setPageOrder] = useState<PageOrderType[]>([]);
 
   useEffect(() => {
@@ -71,7 +73,7 @@ export default function useSetSearchFilters(
         acc.meta = p.res.meta;
         return acc;
       },
-      {} as EndpointsResponseType["CARD_LIST"],
+      {} as CardListResponse,
     );
 
     setRes(combined);

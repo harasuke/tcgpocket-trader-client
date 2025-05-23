@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 
-export default function useGetAPI(url: string, queryParams: Object | undefined = undefined) {
+export default function useGetAPI(url: string, queryParams: Object | undefined = undefined, refreshByFakeParams: boolean = false) {
   const { getToken, isLoaded } = useAuth();
   const [res, setRes] = useState<any>([]);
   const [loadingReq, setLoadingReq] = useState(true);
@@ -14,7 +14,7 @@ export default function useGetAPI(url: string, queryParams: Object | undefined =
     (async function request() {
       try {
         const _getToken = await getToken();
-        const _res = await getRequest(url, queryParams, _getToken);
+        const _res = await getRequest(url, refreshByFakeParams ? {} : queryParams, _getToken);
 
         console.log(url, queryParams, _res);
 

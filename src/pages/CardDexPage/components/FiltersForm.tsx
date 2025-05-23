@@ -21,7 +21,7 @@ export interface Filters {
 interface FiltersFormProps {
   selectedFilters: Filters;
   setSelectedFilters: React.Dispatch<React.SetStateAction<Filters>>;
-  overrideRarity: CardRarity;
+  overrideRarity?: CardRarity;
 }
 
 export const FiltersForm = ({

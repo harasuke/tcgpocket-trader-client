@@ -8,7 +8,7 @@ export default function useFilterModal(
   selectedFilters: Filters,
   setSelectedFilters: React.Dispatch<React.SetStateAction<Filters>>,
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
-  overrideRarity: CardRarity
+  overrideRarity?: CardRarity
 ) {
   const [isOpen, setIsOpen] = useState(false);
 

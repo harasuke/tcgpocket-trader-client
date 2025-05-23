@@ -3,17 +3,19 @@ import { Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { BsSearchHeart, BsSearchHeartFill } from "react-icons/bs";
 import { PiHandHeartBold, PiHandHeartFill } from "react-icons/pi";
-import useSetCardIntentForLanguage from "src/hooks/api/UseSetCardIntentForLanguage";
+import useSetCardIntentForLanguage, { ChangeLanguageIntentResponse } from "src/hooks/api/UseSetCardIntentForLanguage";
 import { Card } from "src/types/api/Card";
+import { CardLanguage } from "src/types/CardLanguage";
 import { GivenLanguageCard } from "src/types/Endpoints";
 
 interface LanguageButtonProps {
   loadingReq: boolean;
   language: GivenLanguageCard;
   card: Card | null;
+  onLanguageIntentChange: (card: Card, language: CardLanguage, res: ChangeLanguageIntentResponse) => void;
 }
 
-export const LanguageButton = ({ loadingReq, language, card }: LanguageButtonProps) => {
+export const LanguageButton = ({ loadingReq, language, card, onLanguageIntentChange }: LanguageButtonProps) => {
   const { setCardIntentForLanguage } = useSetCardIntentForLanguage();
 
   const [isOffered, setIsOffered] = useState(language.isOffered);
@@ -21,8 +23,8 @@ export const LanguageButton = ({ loadingReq, language, card }: LanguageButtonPro
 
   useEffect(() => {
     setIsWanted(language.isWanted);
-    setIsOffered(language.isOffered)
-  }, [language])
+    setIsOffered(language.isOffered);
+  }, [language]);
 
   return (
     <div className="my-3 flex items-center justify-center">
@@ -41,6 +43,7 @@ export const LanguageButton = ({ loadingReq, language, card }: LanguageButtonPro
           }).then((res) => {
             if (res.moved) setIsOffered((prev) => !prev);
             setIsWanted((prev) => !prev);
+            onLanguageIntentChange(card!, language.languageCode, res)
           })
         }
       >
@@ -61,6 +64,8 @@ export const LanguageButton = ({ loadingReq, language, card }: LanguageButtonPro
           }).then((res) => {
             if (res.moved) setIsWanted((prev) => !prev);
             setIsOffered((prev) => !prev);
+            // cannot have ok response without a correct value for card.
+            onLanguageIntentChange(card!, language.languageCode, res)
           })
         }
       >
