@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 
-export default function useGetAPI(url: string, queryParams: Object | undefined = undefined, refreshByFakeParams: boolean = false) {
+export default function useGetAPI(
+  url: string,
+  queryParams: Object | undefined = undefined,
+  toggleUpdate: boolean | undefined = undefined,
+) {
   const { getToken, isLoaded } = useAuth();
   const [res, setRes] = useState<any>([]);
   const [loadingReq, setLoadingReq] = useState(true);
@@ -14,7 +18,7 @@ export default function useGetAPI(url: string, queryParams: Object | undefined =
     (async function request() {
       try {
         const _getToken = await getToken();
-        const _res = await getRequest(url, refreshByFakeParams ? {} : queryParams, _getToken);
+        const _res = await getRequest(url, queryParams, _getToken);
 
         console.log(url, queryParams, _res);
 
@@ -24,7 +28,7 @@ export default function useGetAPI(url: string, queryParams: Object | undefined =
         console.log(url, "Exception on get request > ", err);
       }
     })();
-  }, [isLoaded, JSON.stringify(queryParams), url]);
+  }, [isLoaded, JSON.stringify(queryParams), url, toggleUpdate]);
 
   return { res, loadingReq };
 }
