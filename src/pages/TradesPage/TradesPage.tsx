@@ -1,24 +1,41 @@
 import React, { useState } from "react";
 import { HeroCards } from "../../components/HeroSection/HeroCardList";
-import Trades from "src/components/Trades/Trades";
-import { NavLink } from "react-router";
-import { GiCardExchange, GiCardPick, GiCardRandom } from "react-icons/gi";
-import { MdFavorite } from "react-icons/md";
-import "src/pages/TradesPage/TradePage.css";
 import { Input, Tabs } from "antd";
 import { BsSearchHeart } from "react-icons/bs";
 import { PiHandHeartBold } from "react-icons/pi";
-import TabPane from "antd/es/tabs/TabPane";
-import { Endpoints } from "src/types/Endpoints";
 import { WantedCardList } from "src/components/WantedCardList/WantedCardList";
 import useDebounceInput from "src/hooks/UseDebounceInput";
 import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
+import { OfferedCardList } from "src/components/OfferedCardList/OfferedCardList";
+import "src/pages/TradesPage/TradePage.css";
+
+export const convertedTime = (time: number) => {
+    let ms = time % 1000;
+    let ss = Math.floor(time / 1000) % 60;
+    let mm = Math.floor(time / 1000 / 60) % 60;
+    let hh = Math.floor(time / 1000 / 60 / 60);
+    let days = Math.floor(time/ 1000 /60 /60 /24);
+
+    if (days != 0)
+      return `${days}day ago`
+    if (hh != 0)
+      return `${hh}hour ago`
+    if (mm != 0)
+      return `${mm}min ago`
+    if (ss != 0)
+      return `${ss}sec ago`
+
+    return `just now`
+  }
 
 function TradesPage() {
-  const heroCards = HeroCards;
 
   const [searchByName, setSearchByName] = useState<string | null>(null);
   const { debouncedInput, setDebouncedInput, setRefresh } = useDebounceInput(searchByName, 200);
+
+  const [activeTab, setActiveTab] = useState<number>();
+  const [toggleWantUpdate, setToggleWantUpdate] = useState<boolean>(false);
+  const [toggleOfferUpdate, setToggleOfferUpdate] = useState<boolean>(false);
 
   return (
     <>
@@ -37,6 +54,7 @@ function TradesPage() {
               onClick={() => {
                 setSearchByName("");
                 setRefresh();
+                
               }}
             >
               <CloseOutlined />
@@ -48,6 +66,14 @@ function TradesPage() {
       <Tabs
         centered
         defaultActiveKey="1"
+        onChange={(e) => {
+          if (e == "1") {
+            setToggleWantUpdate((prev) => !prev);
+          } else if (e == "2") {
+            setToggleOfferUpdate((prev) => !prev);
+          }
+          console.log("tab changed to :", e);
+        }}
         items={[BsSearchHeart, PiHandHeartBold].map((Icon, i) => {
           const id = String(i + 1);
 
@@ -71,7 +97,12 @@ function TradesPage() {
                 {/* {i === 0 ? "Check what people are searching for" : "Check what people are offering"} */}
               </span>
             ),
-            children: i === 0 ? <WantedCardList /> : "Offer content here",
+            children:
+              i === 0 ? (
+                <WantedCardList cardsPerPage={30} updateToggler={toggleWantUpdate} />
+              ) : (
+                <OfferedCardList cardsPerPage={30} updateToggler={toggleOfferUpdate} />
+              ),
           };
           //   const id = String(i + 1);
           //   return {

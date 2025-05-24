@@ -45,8 +45,17 @@ export const Endpoints = {
   MATCHED_TRADES: () =>
     `/api/user/recommendations/list`,
 
+  /**
+   *  This api is called to fetch all the offered card by the users
+   */
   ALL_WANTED_CARDS: () =>
     `/api/trade/wanted`,
+
+  /**
+   *  This api is called to fetch all the wanted card by the userss
+   */
+  ALL_OFFERED_CARDS: () =>
+    `/api/trade/offered`,
 
   USER: () =>
     `/api/user/data`,
@@ -65,6 +74,16 @@ export type EndpointsQueryParams = {
     limit: string;
     page: string;
   };
+
+  ALL_OFFERED_CARDS: {
+    limit: string;
+    page: string;
+  }
+
+  ALL_WANTED_CARDS: {
+    limit: string;
+    page: string;
+  }
 }
 
 type SingleCard = {
@@ -105,11 +124,24 @@ export type EndpointsResponseType = {
   }
 
   ALL_WANTED_CARDS: {
-    id: string;
-    baseCardId: string;
-    languageCode: string;
-    imageUrl: string;
-  }[]
+    data: {
+      offeredRelationId: string; // this id is used later to ask for all the user offered cards.
+      baseCardId: string;
+      languageCode: string;
+      imageUrl: string;
+    }[];
+    meta: Meta;
+  }
+
+  ALL_OFFERED_CARDS: {
+    data: {
+      wantedRelationId: string; // this id is used later to ask for all the user wanted cards.
+      baseCardId: string;
+      languageCode: string;
+      imageUrl: string;
+    }[];
+    meta: Meta;
+  }
 
   SINGLE_CARD: SingleCard,
 

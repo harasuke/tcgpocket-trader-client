@@ -1,44 +1,41 @@
 import React, { useEffect, useRef, useState } from "react";
-import useMatchedTrades from "src/hooks/api/UseMatchedTrades";
-import usePerfectTrades from "src/hooks/api/UsePerfectTrades";
 import Card from "../Card";
-import { Card as CardResponse } from "src/types/api/Card";
-import useUsersWantedCards from "src/hooks/api/UseUsersWantedCards";
 import { ScrollHandler } from "../ScrollHandler";
 import SkeletonCard from "../SkeletonCard/SkeletonCard";
-import { CardLanguage } from "src/types/CardLanguage";
-import { CardexCard } from "../CardexCard/CardexCard";
+import useUsersOfferedCards from "src/hooks/api/UseUserOfferedCards";
 import { convertedTime } from "src/pages/TradesPage/TradesPage";
 
-interface WantedCardListProps {
+interface OfferedCardListProps {
   cardsPerPage: number;
   updateToggler: boolean;
 }
 
-export const WantedCardList = ({
+export const OfferedCardList = ({
   cardsPerPage,
   updateToggler,
-}: WantedCardListProps) => {
-
+}: OfferedCardListProps) => {
+  
   const scrollableContent = useRef<HTMLDivElement | null>(null);
   const [refreshOnScroll, setRefreshOnScroll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { res, loadingReq, setRes, toggleUpdate } = useUsersWantedCards({
+  const { res, loadingReq, setRes, toggleUpdate } = useUsersOfferedCards({
     limit: "30",
-    page: currentPage.toString(),
+    page: currentPage.toString()
   });
 
   useEffect(() => {
+    console.log('refresh on scroll')
     if ((res?.meta?.currentPage ?? 1) < (res?.meta?.totalPages ?? 1)) {
-      setCurrentPage((prev) => prev + 1);
+      setCurrentPage(prev => prev+1);
     }
   }, [refreshOnScroll]);
 
   useEffect(() => {
     setCurrentPage(1); // reset page to 1 to force reload from the beginning
+    setRes(null);
     toggleUpdate();
-  }, [updateToggler]);
+  }, [updateToggler])
 
   return (
     <>
@@ -69,9 +66,9 @@ export const WantedCardList = ({
                     }}
                   >
                     <Card
-                      extraClasses={`${c.offeredRelationId} h-auto max-h-full`}
+                      extraClasses={`${c.wantedRelationId} h-auto max-h-full`}
                       url={c.imageUrl}
-                      key={c.offeredRelationId}
+                      key={c.wantedRelationId}
                       canZoom={false}
                       // language={currentLanguage}
                       // onIntentCardChange={onIntentCardChange}
