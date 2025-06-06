@@ -8,28 +8,24 @@ import useDebounceInput from "src/hooks/UseDebounceInput";
 import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
 import { OfferedCardList } from "src/components/OfferedCardList/OfferedCardList";
 import "src/pages/TradesPage/TradePage.css";
+import useAskTradeModal from "../CardDexPage/hooks/UseAskTradeModal";
 
 export const convertedTime = (time: number) => {
-    let ms = time % 1000;
-    let ss = Math.floor(time / 1000) % 60;
-    let mm = Math.floor(time / 1000 / 60) % 60;
-    let hh = Math.floor(time / 1000 / 60 / 60);
-    let days = Math.floor(time/ 1000 /60 /60 /24);
+  let ms = time % 1000;
+  let ss = Math.floor(time / 1000) % 60;
+  let mm = Math.floor(time / 1000 / 60) % 60;
+  let hh = Math.floor(time / 1000 / 60 / 60);
+  let days = Math.floor(time / 1000 / 60 / 60 / 24);
 
-    if (days != 0)
-      return `${days}day ago`
-    if (hh != 0)
-      return `${hh}hour ago`
-    if (mm != 0)
-      return `${mm}min ago`
-    if (ss != 0)
-      return `${ss}sec ago`
+  if (days != 0) return `${days}day ago`;
+  if (hh != 0) return `${hh}hour ago`;
+  if (mm != 0) return `${mm}min ago`;
+  if (ss != 0) return `${ss}sec ago`;
 
-    return `just now`
-  }
+  return `just now`;
+};
 
 function TradesPage() {
-
   const [searchByName, setSearchByName] = useState<string | null>(null);
   const { debouncedInput, setDebouncedInput, setRefresh } = useDebounceInput(searchByName, 200);
 
@@ -37,8 +33,11 @@ function TradesPage() {
   const [toggleWantUpdate, setToggleWantUpdate] = useState<boolean>(false);
   const [toggleOfferUpdate, setToggleOfferUpdate] = useState<boolean>(false);
 
+  const { ModalComponent: modal_askTrade, setIsOpenForCard } = useAskTradeModal();
+
   return (
     <>
+      {modal_askTrade}
       <div className="m-3 flex flex-col">
         <Input
           value={searchByName ?? ""}
@@ -54,7 +53,6 @@ function TradesPage() {
               onClick={() => {
                 setSearchByName("");
                 setRefresh();
-                
               }}
             >
               <CloseOutlined />
@@ -99,9 +97,21 @@ function TradesPage() {
             ),
             children:
               i === 0 ? (
-                <WantedCardList cardsPerPage={30} updateToggler={toggleWantUpdate} />
+                <WantedCardList
+                  cardsPerPage={30}
+                  updateToggler={toggleWantUpdate}
+                  onWantedClicked={(wantedRelationId) => {
+                    setIsOpenForCard(true, wantedRelationId, "wanted");
+                  }}
+                />
               ) : (
-                <OfferedCardList cardsPerPage={30} updateToggler={toggleOfferUpdate} />
+                <OfferedCardList
+                  cardsPerPage={30}
+                  updateToggler={toggleOfferUpdate}
+                  onOfferedClicked={(offeredRelationId) => {
+                    setIsOpenForCard(true, offeredRelationId, "offered");
+                  }}
+                />
               ),
           };
           //   const id = String(i + 1);

@@ -46,16 +46,22 @@ export const Endpoints = {
     `/api/user/recommendations/list`,
 
   /**
-   *  This api is called to fetch all the offered card by the users
+   *  This api should be called to fetch all the offered card by the users
    */
   ALL_WANTED_CARDS: () =>
     `/api/trade/wanted`,
 
   /**
-   *  This api is called to fetch all the wanted card by the userss
+   *  This api should be called to fetch all the wanted card by the userss
    */
   ALL_OFFERED_CARDS: () =>
     `/api/trade/offered`,
+
+  USER_OFFERED_CARDS: (wantedRelationId: string) => 
+    `/api/user/offered/${wantedRelationId}`,
+
+  USER_WANTED_CARDS: (offeredRelationId: string) => 
+    `/api/user/wanted/${offeredRelationId}`,
 
   USER: () =>
     `/api/user/data`,
@@ -81,6 +87,16 @@ export type EndpointsQueryParams = {
   }
 
   ALL_WANTED_CARDS: {
+    limit: string;
+    page: string;
+  }
+
+  USER_OFFERED_CARDS: {
+    limit: string;
+    page: string;
+  }
+
+  USER_WANTED_CARDS: {
     limit: string;
     page: string;
   }
@@ -125,6 +141,16 @@ export type EndpointsResponseType = {
 
   ALL_WANTED_CARDS: {
     data: {
+      wantedRelationId: string; // this id is used later to ask for all the user wanted cards.
+      baseCardId: string;
+      languageCode: string;
+      imageUrl: string;
+    }[];
+    meta: Meta;
+  }
+  
+  ALL_OFFERED_CARDS: {
+    data: {
       offeredRelationId: string; // this id is used later to ask for all the user offered cards.
       baseCardId: string;
       languageCode: string;
@@ -133,12 +159,22 @@ export type EndpointsResponseType = {
     meta: Meta;
   }
 
-  ALL_OFFERED_CARDS: {
+  USER_OFFERED_CARDS: {
     data: {
-      wantedRelationId: string; // this id is used later to ask for all the user wanted cards.
       baseCardId: string;
       languageCode: string;
       imageUrl: string;
+      name: string;
+    }[];
+    meta: Meta;
+  }
+
+  USER_WANTED_CARDS: {
+    data: {
+      baseCardId: string;
+      languageCode: string;
+      imageUrl: string;
+      name: string;
     }[];
     meta: Meta;
   }

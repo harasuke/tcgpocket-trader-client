@@ -1,8 +1,9 @@
-import React, { forwardRef, memo, ReactNode, useEffect, useRef } from "react";
+import React, { CSSProperties, forwardRef, memo, ReactNode, useEffect, useRef } from "react";
 import { useIsOverflowing } from "src/hooks/UseIsOverflowing";
 
 interface ScrollHandlerProps {
   className: string;
+  style?: CSSProperties;
   children: ReactNode | ReactNode[];
   handleOverflow?: boolean;
   scrollableContent: React.RefObject<HTMLDivElement | null>;
@@ -11,6 +12,7 @@ interface ScrollHandlerProps {
 
 export const ScrollHandler = memo(function ScrollHandler({
   className,
+  style,
   children,
   handleOverflow,
   onScrollEnd,
@@ -66,7 +68,7 @@ export const ScrollHandler = memo(function ScrollHandler({
   }, []);
 
   return (
-    <div ref={thisRef} className={className}>
+    <div ref={thisRef} className={className} style={style}>
       {children}
     </div>
   );

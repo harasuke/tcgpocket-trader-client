@@ -8,11 +8,13 @@ import { convertedTime } from "src/pages/TradesPage/TradesPage";
 interface OfferedCardListProps {
   cardsPerPage: number;
   updateToggler: boolean;
+  onOfferedClicked: (offeredRelationId: string) => void
 }
 
 export const OfferedCardList = ({
   cardsPerPage,
   updateToggler,
+  onOfferedClicked
 }: OfferedCardListProps) => {
   
   const scrollableContent = useRef<HTMLDivElement | null>(null);
@@ -66,10 +68,13 @@ export const OfferedCardList = ({
                     }}
                   >
                     <Card
-                      extraClasses={`${c.wantedRelationId} h-auto max-h-full`}
+                      extraClasses={`${c.offeredRelationId} h-auto max-h-full`}
                       url={c.imageUrl}
-                      key={c.wantedRelationId}
+                      key={c.offeredRelationId}
                       canZoom={false}
+                      onClick={() => {
+                        onOfferedClicked(c.offeredRelationId)
+                      }}
                       // language={currentLanguage}
                       // onIntentCardChange={onIntentCardChange}
                     />
