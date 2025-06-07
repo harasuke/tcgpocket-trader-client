@@ -145,6 +145,7 @@ export type EndpointsResponseType = {
       baseCardId: string;
       languageCode: string;
       imageUrl: string;
+      createdAt: Date;
     }[];
     meta: Meta;
   }
@@ -155,6 +156,7 @@ export type EndpointsResponseType = {
       baseCardId: string;
       languageCode: string;
       imageUrl: string;
+      createdAt: Date;
     }[];
     meta: Meta;
   }

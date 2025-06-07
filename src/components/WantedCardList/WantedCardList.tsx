@@ -13,15 +13,14 @@ import { convertedTime } from "src/pages/TradesPage/TradesPage";
 interface WantedCardListProps {
   cardsPerPage: number;
   updateToggler: boolean;
-  onWantedClicked: (wantedRelationId: string) => void
+  onWantedClicked: (wantedRelationId: string) => void;
 }
 
 export const WantedCardList = ({
   cardsPerPage,
   updateToggler,
-  onWantedClicked
+  onWantedClicked,
 }: WantedCardListProps) => {
-
   const scrollableContent = useRef<HTMLDivElement | null>(null);
   const [refreshOnScroll, setRefreshOnScroll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,7 +64,7 @@ export const WantedCardList = ({
                 {res?.data?.map((c, index: number) => (
                   <div
                     key={c.baseCardId}
-                    className="relative m-auto flex flex-col w-auto items-stretch rounded-md"
+                    className="relative m-auto flex w-auto flex-col items-stretch rounded-md"
                     onClick={() => {
                       // openCardZoomModalForCard(true, c);
                     }}
@@ -76,12 +75,14 @@ export const WantedCardList = ({
                       key={c.wantedRelationId}
                       canZoom={false}
                       onClick={() => {
-                        onWantedClicked(c.wantedRelationId)
+                        onWantedClicked(c.wantedRelationId);
                       }}
                       // language={currentLanguage}
                       // onIntentCardChange={onIntentCardChange}
                     />
-                    <span className="">{convertedTime(new Date() - new Date(c.createdAt!))}</span>
+                    <span className="">
+                      {convertedTime(Date.now() - new Date(c.createdAt!).getTime())}
+                    </span>
                   </div>
                 ))}
 

@@ -8,28 +8,27 @@ import { convertedTime } from "src/pages/TradesPage/TradesPage";
 interface OfferedCardListProps {
   cardsPerPage: number;
   updateToggler: boolean;
-  onOfferedClicked: (offeredRelationId: string) => void
+  onOfferedClicked: (offeredRelationId: string) => void;
 }
 
 export const OfferedCardList = ({
   cardsPerPage,
   updateToggler,
-  onOfferedClicked
+  onOfferedClicked,
 }: OfferedCardListProps) => {
-  
   const scrollableContent = useRef<HTMLDivElement | null>(null);
   const [refreshOnScroll, setRefreshOnScroll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   const { res, loadingReq, setRes, toggleUpdate } = useUsersOfferedCards({
     limit: "30",
-    page: currentPage.toString()
+    page: currentPage.toString(),
   });
 
   useEffect(() => {
-    console.log('refresh on scroll')
+    console.log("refresh on scroll");
     if ((res?.meta?.currentPage ?? 1) < (res?.meta?.totalPages ?? 1)) {
-      setCurrentPage(prev => prev+1);
+      setCurrentPage((prev) => prev + 1);
     }
   }, [refreshOnScroll]);
 
@@ -37,7 +36,7 @@ export const OfferedCardList = ({
     setCurrentPage(1); // reset page to 1 to force reload from the beginning
     setRes(null);
     toggleUpdate();
-  }, [updateToggler])
+  }, [updateToggler]);
 
   return (
     <>
@@ -62,7 +61,7 @@ export const OfferedCardList = ({
                 {res?.data?.map((c, index: number) => (
                   <div
                     key={c.baseCardId}
-                    className="relative m-auto flex flex-col w-auto items-stretch rounded-md"
+                    className="relative m-auto flex w-auto flex-col items-stretch rounded-md"
                     onClick={() => {
                       // openCardZoomModalForCard(true, c);
                     }}
@@ -73,12 +72,14 @@ export const OfferedCardList = ({
                       key={c.offeredRelationId}
                       canZoom={false}
                       onClick={() => {
-                        onOfferedClicked(c.offeredRelationId)
+                        onOfferedClicked(c.offeredRelationId);
                       }}
                       // language={currentLanguage}
                       // onIntentCardChange={onIntentCardChange}
                     />
-                    <span className="">{convertedTime(new Date() - new Date(c.createdAt!))}</span>
+                    <span className="">
+                      {convertedTime(Date.now() - new Date(c.createdAt!).getTime())}
+                    </span>
                   </div>
                 ))}
 

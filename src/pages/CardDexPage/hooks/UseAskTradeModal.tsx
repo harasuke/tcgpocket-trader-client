@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Modal } from "antd";
+import { Button, Modal, Spin } from "antd";
 import useLanguageIntentCard from "src/hooks/api/UseLanguageIntentCard";
 import { Card } from "src/types/api/Card";
 import { LanguageButton } from "../components/LanguageButton";
@@ -9,6 +9,7 @@ import usePlayerTradable from "src/hooks/api/UsePlayerTradable";
 import { ScrollHandler } from "src/components/ScrollHandler";
 import CardComponent from "src/components/Card";
 import SkeletonCard from "src/components/SkeletonCard/SkeletonCard";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export default function useAskTradeModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,14 +37,12 @@ export default function useAskTradeModal() {
     _intentType: "wanted" | "offered",
   ) => {
     setIsOpen(toOpen);
-
     setIntentType(_intentType);
     setIntentId(_intentId);
     setSelectedCardId(null);
-    // toggleUpdate();
   };
 
-  const { res, loadingReq } = usePlayerTradable(intentId, intentType, {
+  const { res, loadingReq, setRes } = usePlayerTradable(intentId, intentType, {
     limit: cardsPerPage.toString(),
     page: currentPage.toString(),
   });
@@ -51,7 +50,10 @@ export default function useAskTradeModal() {
   const ModalComponent = (
     <Modal
       open={isOpen}
-      onCancel={() => setIsOpen(false)}
+      onCancel={() => {
+        setIsOpen(false);
+        setRes(null);
+      }}
       closable
       title={""}
       style={{ top: "3rem" }}
@@ -72,7 +74,8 @@ export default function useAskTradeModal() {
         xxl: "40%",
       }}
       footer={[
-        <>
+        <div className="flex w-full justify-between">
+          {<Button disabled={res != null && res?.data?.length > 0}>Propose a card</Button>}
           {intentType == "wanted" && (
             <Button type="primary" disabled={selectedCardId == null}>
               Ask for the Card
@@ -83,7 +86,7 @@ export default function useAskTradeModal() {
               Offer Card
             </Button>
           )}
-        </>,
+        </div>,
       ]}
     >
       <div className="flex w-full items-center justify-center">
@@ -92,63 +95,85 @@ export default function useAskTradeModal() {
         )}
         {intentType == "wanted" && <p className="hero-font">The user is offering these cards</p>}
       </div>
-      <ScrollHandler
-        className="all-cards-scrollable relative top-[.75em] mx-3 overflow-y-scroll"
-        onScrollEnd={() => setRefreshOnScroll((prev) => !prev)}
-        handleOverflow={
-          (res?.meta?.totalPages ?? 1) == 1 ||
-          (res?.meta?.currentPage ?? 1) >= (res?.meta?.totalPages ?? 1)
-            ? false
-            : true
-        }
-        scrollableContent={scrollableContent}
-      >
-        <div
-          ref={scrollableContent}
-          className={`cardex-grid relative grid place-items-center gap-x-2 !gap-y-4 overflow-x-hidden pb-[12rem] sm:!gap-y-2`}
+      {res == null && loadingReq ? (
+        <div className="align-center flex w-full items-center justify-center">
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        </div>
+      ) : (
+        <></>
+      )}
+      {res != null && (
+        <ScrollHandler
+          className="all-cards-scrollable relative top-[.75em] mx-3 overflow-y-scroll"
+          onScrollEnd={() =>
+            res?.meta?.totalPages > 1 ? setRefreshOnScroll((prev) => !prev) : null
+          }
+          handleOverflow={
+            (res?.meta?.totalPages ?? 1) == 1 ||
+            (res?.meta?.currentPage ?? 1) >= (res?.meta?.totalPages ?? 1)
+              ? false
+              : true
+          }
+          scrollableContent={scrollableContent}
         >
-          {res?.data?.map((e, index) => (
-            <div
-              key={index}
-              className="relative m-auto flex w-auto items-stretch rounded-xl"
-              style={{
-                ...(selectedCardId == `${e.baseCardId + index}`
-                  ? { outline: "2px solid blue" }
-                  : {}),
-              }}
-            >
-              {selectedCardId === `${e.baseCardId + index}` && (
-                <div className="hero-font absolute z-50 m-auto flex h-full w-full flex-1 items-center justify-center text-xl text-white">
-                  1/1
-                </div>
-              )}
-              <CardComponent
-                extraClasses={"transition-all duration-100"}
+          <div
+            ref={scrollableContent}
+            className={`cardex-grid relative grid place-items-center gap-x-2 !gap-y-4 overflow-x-hidden px-[2px] pt-[2px] pb-[12rem] sm:!gap-y-2`}
+          >
+            {res?.data?.map((e, index) => (
+              <div
+                key={index}
+                className="relative m-auto flex w-auto items-stretch rounded-xl"
                 style={{
                   ...(selectedCardId == `${e.baseCardId + index}`
-                    ? { filter: "brightness(0.5)" }
+                    ? { outline: "2px solid blue" }
                     : {}),
                 }}
-                key={e.baseCardId + index}
-                url={e.imageUrl}
-                canZoom={false}
-                onClick={() =>
-                  setSelectedCardId((prev) =>
-                    prev != `${e.baseCardId + index}` ? `${e.baseCardId + index}` : null,
-                  )
-                }
+              >
+                {selectedCardId === `${e.baseCardId + index}` && (
+                  <div
+                    className="hero-font absolute z-50 m-auto flex h-full w-full flex-1 items-center justify-center text-xl text-white"
+                    onClick={() =>
+                      setSelectedCardId((prev) =>
+                        prev != `${e.baseCardId + index}` ? `${e.baseCardId + index}` : null,
+                      )
+                    }
+                  >
+                    1/1
+                  </div>
+                )}
+                <img
+                  className="hero-font absolute top-0 right-[.3rem] z-50 m-auto flex w-[2rem] flex-1 items-center justify-center text-xl text-white"
+                  src={`/lang-flags/${e.languageCode}.svg`}
+                />
+                <CardComponent
+                  extraClasses={"transition-all duration-100"}
+                  style={{
+                    ...(selectedCardId == `${e.baseCardId + index}`
+                      ? { filter: "brightness(0.5)" }
+                      : {}),
+                  }}
+                  key={e.baseCardId + index}
+                  url={e.imageUrl}
+                  canZoom={false}
+                  onClick={() =>
+                    setSelectedCardId((prev) =>
+                      prev != `${e.baseCardId + index}` ? `${e.baseCardId + index}` : null,
+                    )
+                  }
+                />
+              </div>
+            ))}
+          </div>
+          {loadingReq &&
+            Array.from({ length: res?.meta?.limit ?? 8 }).map((_, index) => (
+              <SkeletonCard
+                extraClasses="!h-auto !aspect-[2/3] !max-h-full !w-full !rounded-md"
+                key={index}
               />
-            </div>
-          ))}
-        </div>
-        {loadingReq &&
-          Array.from({ length: res?.meta?.limit ?? 8 }).map((_, index) => (
-            <SkeletonCard
-              extraClasses="!h-auto !aspect-[2/3] !max-h-full !w-full !rounded-md"
-              key={index}
-            />
-          ))}
-      </ScrollHandler>
+            ))}
+        </ScrollHandler>
+      )}
       {/* <Button type="primary" className="relative top-[-100%] items-center">Offer Card</Button> */}
 
       {/* {card && (
