@@ -1,13 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import useMatchedTrades from "src/hooks/api/UseMatchedTrades";
-import usePerfectTrades from "src/hooks/api/UsePerfectTrades";
 import Card from "../Card";
-import { Card as CardResponse } from "src/types/api/Card";
 import useUsersWantedCards from "src/hooks/api/UseUsersWantedCards";
 import { ScrollHandler } from "../ScrollHandler";
 import SkeletonCard from "../SkeletonCard/SkeletonCard";
-import { CardLanguage } from "src/types/CardLanguage";
-import { CardexCard } from "../CardexCard/CardexCard";
 import { convertedTime } from "src/pages/TradesPage/TradesPage";
 
 interface WantedCardListProps {
@@ -80,7 +75,7 @@ export const WantedCardList = ({
                       // language={currentLanguage}
                       // onIntentCardChange={onIntentCardChange}
                     />
-                    <span className="">
+                    <span className="italic text-xs">
                       {convertedTime(Date.now() - new Date(c.createdAt!).getTime())}
                     </span>
                   </div>

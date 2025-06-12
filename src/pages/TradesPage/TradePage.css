@@ -47,3 +47,38 @@ div.ant-tabs-nav-list:has(div[data-node-key="2"].ant-tabs-tab-active) .ant-tabs-
   background-color: #1e88e5;
   color: #1e88e5;
 }
+
+/* .cardex-grid {
+  height: calc(100vh - calc(var(--navbar-height) + 5rem))
+} */
+.cardex-grid {
+  height: auto;
+}
+.all-cards-scrollable {
+  height: calc(100vh - calc(var(--navbar-height) + 3rem)); /* default +3rem + 1 from margin-bottom */
+}
+
+.modal-ask-trade:has(.ant-modal-content) .ant-modal-content {
+  padding: 20px !important;
+}
+
+.drawer-ask-trade:has(.ant-drawer-body) .ant-drawer-body {
+  padding: .75rem;
+}
+
+.ant-tabs-content-holder:has(.drawer-ask-trade:has(.ant-drawer-body)) .ant-drawer-body {
+  padding: 0;
+}
+
+.drawer-ask-trade:has(.ant-drawer-header) .ant-drawer-header {
+  padding: 1rem .85rem;
+}
+
+.ant-drawer-body:has(.choose-cards) {
+  padding: 0;
+  padding-left: .75rem;
+  padding-right: .75rem;
+}
+.ant-drawer-body:has(.choose-cards) .ant-tabs-nav {
+  margin: 0;
+}

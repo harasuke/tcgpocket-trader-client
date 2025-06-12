@@ -10,4 +10,5 @@ export type Card = {
   rarity: CardRarity;
   isWanted: boolean;
   isOffered: boolean;
+  baseCardId?: string;
 }

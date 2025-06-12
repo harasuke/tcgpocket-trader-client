@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { HeroCards } from "../../components/HeroSection/HeroCardList";
 import { Input, Tabs } from "antd";
 import { BsSearchHeart } from "react-icons/bs";
 import { PiHandHeartBold } from "react-icons/pi";
@@ -7,8 +6,8 @@ import { WantedCardList } from "src/components/WantedCardList/WantedCardList";
 import useDebounceInput from "src/hooks/UseDebounceInput";
 import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
 import { OfferedCardList } from "src/components/OfferedCardList/OfferedCardList";
+import useAskTradeDrawer from "./hooks/UseAskTradeDrawer";
 import "src/pages/TradesPage/TradePage.css";
-import useAskTradeModal from "../CardDexPage/hooks/UseAskTradeModal";
 
 export const convertedTime = (time: number) => {
   let ms = time % 1000;
@@ -17,10 +16,10 @@ export const convertedTime = (time: number) => {
   let hh = Math.floor(time / 1000 / 60 / 60);
   let days = Math.floor(time / 1000 / 60 / 60 / 24);
 
-  if (days != 0) return `${days}day ago`;
-  if (hh != 0) return `${hh}hour ago`;
-  if (mm != 0) return `${mm}min ago`;
-  if (ss != 0) return `${ss}sec ago`;
+  if (days != 0) return `${days} day${days > 1 ? "s" : ""} ago`;
+  if (hh != 0) return `${hh} hour${hh > 1 ? "s" : ""} ago`;
+  if (mm != 0) return `${mm} min${mm > 1 ? "s" : ""} ago`;
+  if (ss != 0) return `${ss} sec${ss > 1 ? "s" : ""} ago`;
 
   return `just now`;
 };
@@ -33,11 +32,12 @@ function TradesPage() {
   const [toggleWantUpdate, setToggleWantUpdate] = useState<boolean>(false);
   const [toggleOfferUpdate, setToggleOfferUpdate] = useState<boolean>(false);
 
-  const { ModalComponent: modal_askTrade, setIsOpenForCard } = useAskTradeModal();
+  const { DrawerComponent, setIsOpenForCard } = useAskTradeDrawer();
 
   return (
     <>
-      {modal_askTrade}
+      {DrawerComponent}
+      {/* {modal_askTrade} */}
       <div className="m-3 flex flex-col">
         <Input
           value={searchByName ?? ""}
@@ -101,6 +101,7 @@ function TradesPage() {
                   cardsPerPage={30}
                   updateToggler={toggleWantUpdate}
                   onWantedClicked={(wantedRelationId) => {
+                    // toggleUpdate();
                     setIsOpenForCard(true, wantedRelationId, "wanted");
                   }}
                 />
@@ -110,6 +111,7 @@ function TradesPage() {
                   updateToggler={toggleOfferUpdate}
                   onOfferedClicked={(offeredRelationId) => {
                     setIsOpenForCard(true, offeredRelationId, "offered");
+                    // toggleUpdate();
                   }}
                 />
               ),

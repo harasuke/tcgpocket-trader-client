@@ -57,10 +57,16 @@ export const Endpoints = {
   ALL_OFFERED_CARDS: () =>
     `/api/trade/offered`,
 
-  USER_OFFERED_CARDS: (wantedRelationId: string) => 
+  USER_WANTED_CARDS: () =>
+    `/api/user/wanted/list`,
+
+  USER_OFFERED_CARDS: () =>
+    `/api/user/offered/list`,
+
+  OTHERUSER_OFFERED_CARDS: (wantedRelationId: string) => 
     `/api/user/offered/${wantedRelationId}`,
 
-  USER_WANTED_CARDS: (offeredRelationId: string) => 
+  OTHERUSER_WANTED_CARDS: (offeredRelationId: string) => 
     `/api/user/wanted/${offeredRelationId}`,
 
   USER: () =>
@@ -91,12 +97,12 @@ export type EndpointsQueryParams = {
     page: string;
   }
 
-  USER_OFFERED_CARDS: {
+  OTHERUSER_OFFERED_CARDS: {
     limit: string;
     page: string;
   }
 
-  USER_WANTED_CARDS: {
+  OTHERUSER_WANTED_CARDS: {
     limit: string;
     page: string;
   }
@@ -161,22 +167,14 @@ export type EndpointsResponseType = {
     meta: Meta;
   }
 
-  USER_OFFERED_CARDS: {
+  USER_OFFEREDWANTED_CARDS: {
     data: {
       baseCardId: string;
       languageCode: string;
       imageUrl: string;
       name: string;
-    }[];
-    meta: Meta;
-  }
-
-  USER_WANTED_CARDS: {
-    data: {
-      baseCardId: string;
-      languageCode: string;
-      imageUrl: string;
-      name: string;
+      // wantedRelationId: string;
+      relationId: string;
     }[];
     meta: Meta;
   }
